@@ -5,7 +5,7 @@ interface Iuser {
 
 }
 
-const userRepository = {
+export const userRepository = {
 
   findAll: async (): Promise<userInterface[] | null> =>  {
     return await prisma.usuario.findMany() ;
@@ -18,4 +18,3 @@ const userRepository = {
 
 };
 
-module.exports = userRepository;

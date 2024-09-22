@@ -1,3 +1,4 @@
+import { promises } from "dns";
 import { env } from "../config/env";
 import Jwt from 'jsonwebtoken'
 
@@ -7,14 +8,11 @@ export function generateToken(userId: number){
     return Jwt.sign(playLoad, env.SECRET_KEY_JWT , options);
 }
 
-export function verifyToken(token: string){
+export function verifyToken(token: string) {
     try {
         return Jwt.verify(token, env.SECRET_KEY_JWT);
     } catch (error) {
-        return {
-            'message':'error processes verification token',
-            'error': error 
-        };
+        return null ;
     }
 };
 
