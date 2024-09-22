@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id            Int      @id @default(autoincrement())
+  nome_usuario  String
+  senha         String
+  cpf           String   @unique
+  email         String   @unique
+  status        Boolean
+  dt_criacao    DateTime @default(now())
+  dt_deletado   DateTime
+  dt_atualizado DateTime
+
+  produtosAtualizacao Produto[]          @relation("AtualizacaoUsuario")
+  produtosCadastro    Produto[]          @relation("CadastroUsuario")
+  notificacoes        Notificacao[]
+  recoveryTokens      TokenRecuperacao[]
+  movimentacoes       Movimentacao[]
+}
+
+model TokenRecuperacao {
+  id           Int      @id @default(autoincrement())
+  id_usuario   Int
+  token        String   @unique
+  dt_criado    DateTime @default(now())
+  dt_expiracao DateTime
+  status       Boolean
+
+  usuario Usuario @relation(fields: [id_usuario], references: [id])
+}
+
+model Produto {
+  id                     Int      @id @default(autoincrement())
+  nome                   String
+  descricao              String
+  data_validade          DateTime
+  unidade_medida         String
+  id_categoria           Int
+  id_marca               Int
+  id_usuario_atualizacao Int
+  id_usuario_cadastro    Int
+  status                 Boolean
+  dt_criacao             DateTime
+  dt_deletado            DateTime
+  dt_atualizado          DateTime
+
+  categoria            Categoria             @relation(fields: [id_categoria], references: [id])
+  marca                Marca                 @relation(fields: [id_marca], references: [id])
+  usuarioAtualizacao   Usuario               @relation("AtualizacaoUsuario", fields: [id_usuario_atualizacao], references: [id])
+  usuarioCadastro      Usuario               @relation("CadastroUsuario", fields: [id_usuario_cadastro], references: [id])
+  estoque              Estoque[]
+  movimentacoesProduto MovimentacaoProduto[]
+}
+
+model Estoque {
+  id                Int @id @default(autoincrement())
+  id_produto        Int
+  estoque           Int
+  quantidade_minima Int
+
+  produto Produto @relation(fields: [id_produto], references: [id])
+}
+
+model Marca {
+  id   Int    @id @default(autoincrement())
+  nome String
+
+  produtos Produto[]
+}
+
+model Categoria {
+  id   Int    @id @default(autoincrement())
+  nome String
+
+  produtos Produto[]
+}
+
+model Notificacao {
+  id         Int      @id @default(autoincrement())
+  id_usuario Int
+  mensagem   String
+  visto      DateTime
+
+  usuario Usuario @relation(fields: [id_usuario], references: [id])
+}
+
+model Movimentacao {
+  id              Int      @id @default(autoincrement())
+  id_usuario      Int
+  tipo            String
+  destino         String
+  dt_movimentacao DateTime
+
+  usuario  Usuario               @relation(fields: [id_usuario], references: [id])
+  produtos MovimentacaoProduto[]
+}
+
+model MovimentacaoProduto {
+  id              Int @id @default(autoincrement())
+  id_movimentacao Int
+  id_produto      Int
+  quantidade      Int
+
+  movimentacao Movimentacao @relation(fields: [id_movimentacao], references: [id])
+  produto      Produto      @relation(fields: [id_produto], references: [id])
+}
