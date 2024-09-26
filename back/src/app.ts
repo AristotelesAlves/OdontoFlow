@@ -1,6 +1,6 @@
 import fastify from 'fastify';
 import {env} from './config/env'
-import { routes } from './router';
+import { routes } from './routes';
 
 export const app = fastify();
 
