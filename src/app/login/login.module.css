@@ -1,0 +1,121 @@
+.container {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-color: #CDDBFF;
+}
+
+.box {
+    display: flex;
+    border-radius: 20px;
+    overflow: hidden;
+    width: 80%;
+    height: 75%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.leftSide {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    background-color: white;
+}
+
+.rightSide {
+    flex: 1;
+    position: relative; 
+}
+
+.imageContainer {
+    position: relative; 
+}
+
+.titleContainer {
+    position: absolute; 
+    top: 10%; 
+    left: 50%;
+    transform: translateX(-50%); 
+    display: flex; 
+    align-items: center; 
+}
+
+.imageTitle {
+    color: var(--White, #FFF);
+    font-family: "Aref Ruqaa Ink";
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    
+}
+
+.logo {
+    width: 68px; 
+    height: 68px;
+    margin-right: 1vw;
+}
+
+.title {
+    font-size: 3vw;
+    font-weight: bold;
+    color: #3182CE;
+    margin-bottom: 10px;
+    margin-left: 3vw;
+}
+
+.subtitle {
+    font-size: 1vw;
+    margin-bottom: 1vw;
+    margin-left: 3vw;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: 20vw;
+    margin-left: 3vw;
+}
+
+.formDiv {
+    margin-bottom: 15px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.buttonContainer {
+    display: flex; 
+    justify-content: flex-start; 
+}
+
+.button {
+    padding: 0.5vw 9vw;
+    background-color: #3182CE;
+    color: white;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    align-items: cen;
+}
+
+.button:hover {
+    background-color: black;
+}
+
+.image {
+    max-width: 100%;
+    height: 100%;
+}
