@@ -11,10 +11,14 @@ const users: userInterface[]  = [
         status: true,
         senha: '$2b$10$Gj5xRjaSqcn5JJ/X1XQwbezbb11UgGrwti6eexX7VbqztzI6qv9b.', // eunaolembro
         dt_atualizado: new Date(),
+        id_clinica: 1,
+        id_perfil_usuario:1,
         dt_deletado: null,
     },
     {
         id: 2,
+        id_clinica:1,
+        id_perfil_usuario: 2,
         nome_usuario: 'João cabral',
         email: 'joaocabral@gmail.com',
         cpf: '90630263078',

@@ -5,6 +5,8 @@ export interface userInterface {
     cpf: string;
     status: boolean;
     senha: string;
+    id_perfil_usuario: number;
+    id_clinica: number;
     dt_atualizado: Date;
     dt_deletado: Date | null;
   }

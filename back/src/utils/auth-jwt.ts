@@ -2,8 +2,8 @@ import { promises } from "dns";
 import { env } from "../config/env";
 import Jwt from 'jsonwebtoken'
 
-export function generateToken(userId: number){
-    const playLoad = {userId};
+export function generateToken(id: number){
+    const playLoad = {id};
     const options = { expiresIn: '1h' };
     return Jwt.sign(playLoad, env.SECRET_KEY_JWT , options);
 }

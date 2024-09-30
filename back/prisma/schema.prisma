@@ -7,40 +7,69 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url = "file:./dev.db"
+}
+
+model Clinica {
+  id            Int            @id @default(autoincrement())
+  nome          String
+  endereco      String
+  telefone      String
+  status        Boolean
+  dt_criacao    DateTime       @default(now())
+  dt_deletado   DateTime?
+  dt_atualizado DateTime       @updatedAt
+  usuarios      Usuario[]
+  produtos      Produto[]
+  estoques      Estoque[]
+  movimentacoes Movimentacao[]
+  listasCompra  ListaCompra[]
 }
 
 model Usuario {
-  id            Int      @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   nome_usuario  String
   senha         String
-  cpf           String   @unique
-  email         String   @unique
+  cpf           String         @unique
+  email         String         @unique
   status        Boolean
-  dt_criacao    DateTime @default(now())
-  dt_deletado   DateTime
-  dt_atualizado DateTime
-
-  produtosAtualizacao Produto[]          @relation("AtualizacaoUsuario")
-  produtosCadastro    Produto[]          @relation("CadastroUsuario")
-  notificacoes        Notificacao[]
-  recoveryTokens      TokenRecuperacao[]
-  movimentacoes       Movimentacao[]
+  dt_criacao    DateTime       @default(now())
+  dt_deletado   DateTime?
+  dt_atualizado DateTime       @updatedAt
+  id_clinica    Int
+  clinica       Clinica        @relation(fields: [id_clinica], references: [id])
+  perfil        PerfilUsuario?
+  recuperacao   Recuperacao[]
+  notificacoes  Notificacao[]
+  movimentacoes Movimentacao[]
 }
 
-model TokenRecuperacao {
-  id           Int      @id @default(autoincrement())
-  id_usuario   Int
-  token        String   @unique
-  dt_criado    DateTime @default(now())
-  dt_expiracao DateTime
-  status       Boolean
+model Recuperacao {
+  id                 Int       @id @default(autoincrement())
+  id_usuario         Int
+  codigo_recuperacao String
+  dt_validacao       DateTime?
+  dt_criacao         DateTime  @default(now())
+  usuario            Usuario   @relation(fields: [id_usuario], references: [id])
+}
 
-  usuario Usuario @relation(fields: [id_usuario], references: [id])
+model PerfilUsuario {
+  id                Int     @id @default(autoincrement())
+  id_usuario        Int     @unique
+  criar_usuario     Boolean
+  editar_usuario    Boolean
+  inativar_usuario  Boolean
+  adicionar_produto Boolean
+  inativar_produto  Boolean
+  saida_produto     Boolean
+  entrada_produto   Boolean
+  uso_produto       Boolean
+  lista_usuario Boolean
+  usuario           Usuario @relation(fields: [id_usuario], references: [id])
 }
 
 model Produto {
-  id                     Int      @id @default(autoincrement())
+  id                     Int                   @id @default(autoincrement())
   nome                   String
   descricao              String
   data_validade          DateTime
@@ -50,67 +79,74 @@ model Produto {
   id_usuario_atualizacao Int
   id_usuario_cadastro    Int
   status                 Boolean
-  dt_criacao             DateTime
-  dt_deletado            DateTime
-  dt_atualizado          DateTime
-
-  categoria            Categoria             @relation(fields: [id_categoria], references: [id])
-  marca                Marca                 @relation(fields: [id_marca], references: [id])
-  usuarioAtualizacao   Usuario               @relation("AtualizacaoUsuario", fields: [id_usuario_atualizacao], references: [id])
-  usuarioCadastro      Usuario               @relation("CadastroUsuario", fields: [id_usuario_cadastro], references: [id])
-  estoque              Estoque[]
-  movimentacoesProduto MovimentacaoProduto[]
+  em_uso                 Boolean
+  dt_criacao             DateTime              @default(now())
+  dt_deletado            DateTime?
+  dt_atualizado          DateTime              @updatedAt
+  id_clinica             Int
+  clinica                Clinica               @relation(fields: [id_clinica], references: [id])
+  marca                  Marca                 @relation(fields: [id_marca], references: [id])
+  categoria              Categoria             @relation(fields: [id_categoria], references: [id])
+  estoques               Estoque[]
+  movimentacoesProduto   MovimentacaoProduto[]
+  listasCompra           ListaCompra[]
 }
 
 model Estoque {
-  id                Int @id @default(autoincrement())
+  id                Int     @id @default(autoincrement())
   id_produto        Int
+  id_clinica        Int
   estoque           Int
   quantidade_minima Int
-
-  produto Produto @relation(fields: [id_produto], references: [id])
+  produto           Produto @relation(fields: [id_produto], references: [id])
+  clinica           Clinica @relation(fields: [id_clinica], references: [id])
 }
 
 model Marca {
-  id   Int    @id @default(autoincrement())
-  nome String
-
+  id       Int       @id @default(autoincrement())
+  nome     String
   produtos Produto[]
 }
 
 model Categoria {
-  id   Int    @id @default(autoincrement())
-  nome String
-
+  id       Int       @id @default(autoincrement())
+  nome     String
   produtos Produto[]
 }
 
 model Notificacao {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   id_usuario Int
   mensagem   String
-  visto      DateTime
-
-  usuario Usuario @relation(fields: [id_usuario], references: [id])
+  visto      DateTime?
+  usuario    Usuario   @relation(fields: [id_usuario], references: [id])
 }
 
 model Movimentacao {
-  id              Int      @id @default(autoincrement())
-  id_usuario      Int
-  tipo            String
-  destino         String
-  dt_movimentacao DateTime
-
-  usuario  Usuario               @relation(fields: [id_usuario], references: [id])
-  produtos MovimentacaoProduto[]
+  id                   Int                   @id @default(autoincrement())
+  id_usuario           Int
+  id_clinica           Int
+  tipo                 String
+  destino              String
+  dt_movimentacao      DateTime              @default(now())
+  usuario              Usuario               @relation(fields: [id_usuario], references: [id])
+  clinica              Clinica               @relation(fields: [id_clinica], references: [id])
+  movimentacoesProduto MovimentacaoProduto[]
 }
 
 model MovimentacaoProduto {
-  id              Int @id @default(autoincrement())
+  id              Int          @id @default(autoincrement())
   id_movimentacao Int
   id_produto      Int
   quantidade      Int
+  movimentacao    Movimentacao @relation(fields: [id_movimentacao], references: [id])
+  produto         Produto      @relation(fields: [id_produto], references: [id])
+}
 
-  movimentacao Movimentacao @relation(fields: [id_movimentacao], references: [id])
-  produto      Produto      @relation(fields: [id_produto], references: [id])
+model ListaCompra {
+  id         Int     @id @default(autoincrement())
+  id_clinica Int
+  id_produto Int
+  clinica    Clinica @relation(fields: [id_clinica], references: [id])
+  produto    Produto @relation(fields: [id_produto], references: [id])
 }

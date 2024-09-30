@@ -1,11 +1,16 @@
 import { userInterface } from "../domain/user/userInterface";
 import { UserRepository } from "../domain/user/UserRepository";
+import { UserProfileRepositoryInterface } from "../domain/userProfile/userProfileRepositoryInterface";
 import { generateToken } from "../utils/auth-jwt";
+import { AuthProfilePermision } from "../utils/authProfile";
 import { generateHash, verifyHash } from "../utils/crypt";
 
 export class UserService{
 
-    constructor(private userRepository: UserRepository) {}
+    constructor(
+        private userRepository: UserRepository,
+        private permision: UserProfileRepositoryInterface
+    ) {}
 
     async login(email: string, password: string){
         try {
@@ -87,6 +92,10 @@ export class UserService{
             message: 'User registered successfully',
             data: result
         }
+
+    }
+
+    async listUser(){
 
     }
 
