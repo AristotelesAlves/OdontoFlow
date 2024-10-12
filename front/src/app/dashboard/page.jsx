@@ -1,3 +1,5 @@
+"use client"
+
 import RootLayout from "../../components/layout/RootLayout";
 
 export default function page(){

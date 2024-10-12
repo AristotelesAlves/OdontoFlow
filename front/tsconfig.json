@@ -27,7 +27,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/util/checkRouterPrivate.js", "src/config/appRoutes/index.js", "src/config/env/index.js"  ],
   "exclude": [
     "node_modules"
   ]
