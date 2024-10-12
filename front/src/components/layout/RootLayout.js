@@ -10,18 +10,21 @@ export default function RootLayout({ children }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const auth = checkRouterPrivate(); 
-    if (!auth) {
-      router.push('/login'); 
-    } else {
-      setLoading(false); 
-    }
-  }, [router]);
 
-  if (loading) {
-    return <div className="h-screen w-screen flex items-center justify-center">Loading...</div>; 
-  }
+    // Logica de verificação de autenticação do usuário para paginas privadas
+
+  // useEffect(() => {
+  //   const auth = checkRouterPrivate(); 
+  //   if (!auth) {
+  //     router.push('/login'); 
+  //   } else {
+  //     setLoading(false); 
+  //   }
+  // }, [router]);
+
+  // if (loading) {
+  //   return <div className="h-screen w-screen flex items-center justify-center">Loading...</div>; 
+  // }
 
   return (
     <html lang="pt-br">
