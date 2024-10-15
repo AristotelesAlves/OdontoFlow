@@ -18,7 +18,7 @@ export default function page(){
     return (
         <RootLayout>
             <div className="flex justify-between items-center">
-                <h1 className="font-bold text-blue text-4xl">
+                <h1 className="font-bold text-blue text-5xl">
                     Histórico
                 </h1>
                 <PagNavigation/>

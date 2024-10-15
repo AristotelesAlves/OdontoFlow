@@ -4,13 +4,16 @@ import { ArrowLeft, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 export default function PagNavigation(){
     return (
         <ul className="flex gap-1 items-center text-xl">
+            <li className="pr-1 text-lg">
+                Páginas:
+            </li>
             <li>
                 <button className="p-1 rounded-full border w-9 h-9 flex items-center justify-center">
                     <ArrowLeft/>
                 </button>
             </li>
             <li>
-                <button className="p-1 rounded-full border w-9 h-9 flex items-center justify-center bg-blue text-white">
+                <button className="p-1 rounded-full border w-9 h-9 flex items-center justify-center bg-cyan text-white">
                     1
                 </button>
             </li>

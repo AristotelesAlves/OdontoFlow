@@ -58,14 +58,6 @@ export default function Header(){
                                 </span>
                             </div>
                         </li>
-                        <li>
-                            <figure>
-                                <img className="w-14 h-14 rounded-full"
-                                  src="https://i.pinimg.com/736x/68/2d/d0/682dd04c8020d93412298636e510572d.jpg" 
-                                  alt="" 
-                                />
-                            </figure>
-                        </li>
                     </ul>
                 </nav>
             </div>
