@@ -1,4 +1,3 @@
-import { promises } from "dns";
 import { env } from "../config/env";
 import Jwt from 'jsonwebtoken'
 

@@ -1,0 +1,129 @@
+/*!******************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[10].use[3]!./src/components/layout/layout.css ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************/
+
+/*!**************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[5].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[5].use[3]!./src/app/login/login.module.css ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************/
+.login_container__kitvQ {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-color: #CDDBFF;
+}
+
+.login_box__THpFZ {
+    display: flex;
+    border-radius: 20px;
+    overflow: hidden;
+    width: 80%;
+    height: 75%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login_leftSide__yXzD1 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    background-color: white;
+}
+
+.login_rightSide__09_aj {
+    flex: 1;
+    position: relative; 
+}
+
+.login_imageContainer__9LI_e {
+    position: relative; 
+}
+
+.login_titleContainer__f723w {
+    position: absolute; 
+    top: 10%; 
+    left: 50%;
+    transform: translateX(-50%); 
+    display: flex; 
+    align-items: center; 
+}
+
+.login_imageTitle__mBIlj {
+    color: var(--White, #FFF);
+    font-family: "Aref Ruqaa Ink";
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    
+}
+
+.login_logo__uuWzc {
+    width: 68px; 
+    height: 68px;
+    margin-right: 1vw;
+}
+
+.login_title__r1aBc {
+    font-size: 3vw;
+    font-weight: bold;
+    color: #3182CE;
+    margin-bottom: 10px;
+    margin-left: 3vw;
+}
+
+.login_subtitle__JqAz7 {
+    font-size: 1vw;
+    margin-bottom: 1vw;
+    margin-left: 3vw;
+}
+
+.login_form__NY6Qf {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: 20vw;
+    margin-left: 3vw;
+}
+
+.login_formDiv__PEPSV {
+    margin-bottom: 15px;
+}
+
+.login_label__9OzGh {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.login_input__GK8Qo {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.login_buttonContainer__qqUvk {
+    display: flex; 
+    justify-content: flex-start; 
+}
+
+.login_button__dh0qR {
+    padding: 0.5vw 9vw;
+    background-color: #3182CE;
+    color: white;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    align-items: cen;
+}
+
+.login_button__dh0qR:hover {
+    background-color: black;
+}
+
+.login_image__XE_sc {
+    max-width: 100%;
+    height: 100%;
+}
+

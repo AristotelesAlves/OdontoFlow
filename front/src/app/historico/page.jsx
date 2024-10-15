@@ -1,7 +1,8 @@
 "use client"
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import RootLayout from "../../components/layout/RootLayout";
-import TabelaLayout from "../../components/layout/TabelaLayout";
+import TabelaLayout from "../../components/Table";
+import PagNavigation from "../../components/common/PagNavigation";
 
 export default function page(){
 
@@ -17,41 +18,10 @@ export default function page(){
     return (
         <RootLayout>
             <div className="flex justify-between items-center">
-                <h1 className="font-bold text-blue text-3xl">
+                <h1 className="font-bold text-blue text-4xl">
                     Histórico
                 </h1>
-                <ul className="flex gap-1 items-center">
-                    <li>
-                        <button className="p-1 rounded-full border w-8 h-8 flex items-center justify-center">
-                            <ArrowLeft/>
-                        </button>
-                    </li>
-                    <li>
-                        <button className="p-1 rounded-full border w-8 h-8 flex items-center justify-center bg-blue text-white">
-                            1
-                        </button>
-                    </li>
-                    <li>
-                        <button className="p-1 rounded-full border w-8 h-8 flex items-center justify-center">
-                            2
-                        </button>
-                    </li>
-                    <li>
-                        <button className="p-1 rounded-full border w-8 h-8 flex items-center justify-center">
-                            3
-                        </button>
-                    </li>
-                    <li>
-                        <button className="p-1 rounded-full border w-8 h-8 flex items-center justify-center">
-                            4
-                        </button>
-                    </li>
-                    <li>
-                        <button className="p-1 rounded-full border w-8 h-8 flex items-center justify-center">
-                            <ArrowRight/>
-                        </button>
-                    </li>
-                </ul>
+                <PagNavigation/>
             </div>
             <TabelaLayout data={data} />
         </RootLayout>

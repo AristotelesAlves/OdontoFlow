@@ -1,15 +1,12 @@
-import { userInterface } from "../domain/user/userInterface";
-import { UserRepository } from "../domain/user/UserRepository";
-import { UserProfileRepositoryInterface } from "../domain/userProfile/userProfileRepositoryInterface";
+import { userInterface } from "../domain/interface/userInterface";
+import { UserRepositoryInterface } from "../domain/repository/UserRepositoryInterface";
 import { generateToken } from "../utils/auth-jwt";
-import { AuthProfilePermision } from "../utils/authProfile";
 import { generateHash, verifyHash } from "../utils/crypt";
 
 export class UserService{
 
     constructor(
-        private userRepository: UserRepository,
-        private permision: UserProfileRepositoryInterface
+        private userRepository: UserRepositoryInterface
     ) {}
 
     async login(email: string, password: string){
@@ -36,8 +33,10 @@ export class UserService{
                     message: 'Invalid password'
                 }
             }
-            const {senha, ...userWithoutPassword} = user
+            
+            const {senha,dt_deletado, ...userWithoutPassword} = user
             const token = generateToken(user.id); // isso da qui é uma pura de uma cambiarra !
+            
             return {
                 statusCode: 200, // codigo do pai ok 👍
                 message: 'User authenticad',
@@ -56,7 +55,7 @@ export class UserService{
         }
     }
 
-    async register(userData: Omit<userInterface, 'id'>): Promise<{statusCode:number, message: string, data?: userInterface}>{
+    async register(userData: Omit<userInterface, 'id'>): Promise<{statusCode:number, message?: string, data?: userInterface}>{
         const userByEmail = await this.userRepository.findByEmail(userData.email)
         const userByCpf = await this.userRepository.findByCpf(userData.cpf)
 
@@ -89,15 +88,40 @@ export class UserService{
 
         return {
             statusCode: 201,
-            message: 'User registered successfully',
-            data: result
+            message: 'User registered successfully'
         }
 
     }
 
-    async listUser(){
+    async findAll(): Promise<{statusCode:number, message?: string, data?: Omit<userInterface, "senha">[]}> {
+        try {
+            const users = await this.userRepository.findAll();
+
+            if(!users){
+                return {
+                    statusCode: 400,
+                    message: 'not found'
+                }
+            }
+
+            return {
+                statusCode: 200,
+                data: users 
+            };
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            return {
+                statusCode: 500,
+                message: 'Internal Server Error'
+            };
+        }
+    }
+
+    async inactiveUser(){
 
     }
 
-    
+    async updateUser(){
+
+    }
 }

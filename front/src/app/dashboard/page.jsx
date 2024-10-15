@@ -1,7 +1,7 @@
 "use client"
 
 import RootLayout from "../../components/layout/RootLayout";
-import TabelaLayout from "../../components/layout/TabelaLayout";
+import Table from "../../components/Table";
 
 
 export default function page(){
@@ -18,51 +18,7 @@ export default function page(){
 
     return (
         <RootLayout>
-            <div>
-                <div className="w-fit px-8 py-5 rounded-2xl bg-blue text-white">
-                    <h1 className="text-xl font-semibold">
-
-                        Entradas e saídas
-                    </h1>
-                    <div className="py-2 flex gap-1 items-end">
-                        <strong className="text-3xl">
-                            22
-                        </strong>
-                        <span>
-                            Entradas / Saídas hoje
-                        </span>
-                    </div>
-                    <div className="flex w-full justify-between">
-                        <div className=" flex flex-col items-center justify-center">
-                            <strong>
-                                10
-                            </strong>
-                            <span className="text-sm">
-                                8h
-                            </span>
-                        </div>
-                        <div className="border-l border-black"></div>
-                        <div className=" flex flex-col items-center justify-center">
-                            <strong>
-                                10
-                            </strong>
-                            <span className="text-sm">
-                                8h
-                            </span>
-                        </div>
-                        <div className="border-l border-black"></div>
-                        <div className="flex flex-col items-center justify-center">
-                            <strong>
-                                10
-                            </strong>
-                            <span className="text-sm">
-                                8h
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <TabelaLayout data={data} />
+            <Table data={data} />
         </RootLayout>
     )
 }
