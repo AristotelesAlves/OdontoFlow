@@ -36,6 +36,11 @@ export default function Header(){
                                 Usuário
                             </Link>
                         </li>
+                        <li className={`py-2 px-4 rounded-3xl border-2 hover:bg-blue hover:bg-opacity-65 hover:text-white ${paginaAtual == 'compras' ? 'bg-blue text-white border-blue border-opacity-50' : null}`}>
+                            <Link href="/compras">
+                                Compras
+                            </Link>
+                        </li>
                     </ul>
                 </nav>
             </div>
