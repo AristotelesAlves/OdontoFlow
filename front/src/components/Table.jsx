@@ -4,18 +4,45 @@ import { UserModal } from './modal/UserModal';
 
 export default function Table({ data = [], acao = false, type }) {
     const [dropDownIndex, setDropDownIndex] = useState(false);
+    const [alert, setAlert] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
+    const [selectItem, setSelectItem] = useState(null);
+    
+    function inactive(){
 
-    const closeModal = useCallback(() => {
+    }
+
+    function active(){
+        
+    }
+    
+    function closeModal(){
         setIsModalOpen(false);
-        setSelectedUser(null);
-    }, []);
+        setSelectItem(null);
+    };
 
-    const openUserModal = useCallback((item) => {
-        setSelectedUser(item);
+    function openAlert(){
+        
+    }
+
+    function openUserModal(item){
+        setSelectItem(item);
         setIsModalOpen(true);
-    }, []);
+    };
+
+    function renderModal(typeModal){
+        const modal = {
+            'user': <UserModal 
+                    type={'edit'} 
+                    nome={selectItem.Nome} 
+                    email={selectItem.Email} 
+                    cpf={selectItem.CPF} 
+                    onClose={closeModal} 
+                />,
+            'lista compras':<div>Modal de teste</div>
+        }
+        return modal[typeModal]
+    }
 
     function renderStatusIcon(status){
         const icons = {
@@ -49,6 +76,7 @@ export default function Table({ data = [], acao = false, type }) {
         }
         return color[param] || null
     }
+
 
     function renderCell(key, value, item, index){
         
@@ -130,14 +158,8 @@ export default function Table({ data = [], acao = false, type }) {
 
     return (
         <div>
-            {isModalOpen && selectedUser && (
-                <UserModal 
-                    type={'edit'} 
-                    nome={selectedUser.Nome} 
-                    email={selectedUser.Email} 
-                    cpf={selectedUser.CPF} 
-                    onClose={closeModal} 
-                />
+            {isModalOpen && (
+                renderModal(type)
             )}
             <table className="min-w-full">
                 <thead>

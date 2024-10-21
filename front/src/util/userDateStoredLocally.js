@@ -1,22 +1,26 @@
-export function save(user){
-    const { id, name, email, clinica_id, token } = user;
-    
-    const userDate = {
-      id,
-      name,
-      email,
-      clinica_id,
-      token,
-    };
-
-    localStorage.setItem('userDate', JSON.stringify(dadosUsuario));
+export function save({ id, name, email, clinica_id, token }) {
+    if (typeof window !== 'undefined') {
+        const userDate = {
+            id,
+            name,
+            email,
+            clinica_id,
+            token,
+        };
+        localStorage.setItem('userDate', JSON.stringify(userDate));
+    }
 }
 
-export function get(){
-    const user = localStorage.getItem('userDate');
-    return user ? JSON.parse(user) : null;
+export function get() {
+    if (typeof window !== 'undefined') { 
+        const user = localStorage.getItem('userDate');
+        return user ? JSON.parse(user) : null;
+    }
+    return 
 }
 
-export function remover(){
-    localStorage.removeItem('userDate');
+export function remover() {
+    if (typeof window !== 'undefined') { 
+        localStorage.removeItem('userDate');
+    }
 }
