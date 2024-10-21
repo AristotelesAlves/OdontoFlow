@@ -1,6 +1,6 @@
 import { userInterface } from "../domain/interface/userInterface";
 import { UserRepositoryInterface } from "../domain/repository/UserRepositoryInterface";
-import { generateToken } from "../utils/auth-jwt";
+import { generateToken, verifyToken } from "../utils/auth-jwt";
 import { generateHash, verifyHash } from "../utils/crypt";
 
 export class UserService{
@@ -115,6 +115,14 @@ export class UserService{
                 message: 'Internal Server Error'
             };
         }
+    }
+
+    async authVerify(token: string): Promise<{ statusCode: number; message: string; }> {
+        const verify = verifyToken(token);
+        if (verify) {
+            return { statusCode: 200, message: "Token is valid" }; 
+        }
+        return { statusCode: 401, message: "Invalid or expired token" };
     }
 
     async inactiveUser(){

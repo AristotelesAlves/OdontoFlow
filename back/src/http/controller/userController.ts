@@ -1,5 +1,5 @@
 import { UserRepositoryInterface } from "../../domain/repository/UserRepositoryInterface";
-import { loginSchema, registerSchema } from "../../domain/schemaZoid/userChemaZoid";
+import { loginSchema, registerSchema, tokenJwtSchema } from "../../domain/schemaZoid/userChemaZoid";
 import { UserService } from "../../service/userService";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
@@ -13,6 +13,7 @@ export class UserController {
     async login(req: FastifyRequest, reply: FastifyReply) {
         try {
             const { email, senha } = loginSchema.parse(req.body);
+
             const result = await new UserService(this.memoryUser).login(email, senha);
 
             if (result.statusCode !== 200) {
@@ -72,6 +73,22 @@ export class UserController {
         } catch (error) {
             console.error("Error listing users:", error);
             return reply.status(500).send({ message: "Internal Server Error" });
+        }
+    }
+
+    async authVerify(req: FastifyRequest, reply: FastifyReply) {
+        try {
+            const { token } = tokenJwtSchema.parse(req.body);
+            const service = new UserService(this.memoryUser);
+            const result = await service.authVerify(token); 
+    
+            if (result.statusCode !== 200) {
+                return reply.status(result.statusCode).send(result.message);
+            } else {
+                return reply.status(200).send(result.message);
+            }
+        } catch (error) {
+            return reply.status(400).send({ message: "Invalid request" });
         }
     }
     

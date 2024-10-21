@@ -11,7 +11,7 @@ export function verifyToken(token: string) {
     try {
         return Jwt.verify(token, env.SECRET_KEY_JWT);
     } catch (error) {
-        return null ;
+        return false ;
     }
 };
 

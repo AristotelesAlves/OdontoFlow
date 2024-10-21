@@ -5,6 +5,10 @@ export const loginSchema = z.object({
     senha: z.string().min(8).max(16)
 })
 
+export const tokenJwtSchema = z.object({
+    token: z.string()
+})
+
 export const registerSchema = z.object({
     email: z.string().email(),
     senha: z.string().min(8).max(16),
