@@ -114,7 +114,7 @@ export default function Table({ data = [], acao = false, type }) {
             return value
         }
 
-        if (key.trim() === 'estoque_progresso') return null;
+        if (key.trim().toUpperCase() === 'ESTOQUE_PROGRESSO') return null;
 
         if (key.trim() === 'STATUS') {
         }
@@ -166,7 +166,7 @@ export default function Table({ data = [], acao = false, type }) {
                     <tr>
                         {data.length > 0 && Object.keys(data[0]).map((key) => (
                             <th key={key} className="px-4 py-2 text-left text-gray-600 text-base">
-                                {key.toUpperCase().replace(/_/g, ' ')}
+                                {key.toUpperCase() !== 'ESTOQUE_PROGRESSO' ? key.toUpperCase().replace(/_/g, ' ') : null}
                             </th>
                         ))}
                         {acao && <th className="text-gray-600 pr-5">AÇÃO</th>}
