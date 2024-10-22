@@ -22,7 +22,7 @@ export function UserModal({nome, email, cpf, onClose, type}){
                 <InputWithLabel label={'Nome'} value={nome}/>
                 <InputWithLabel label={'Email'} value={email}/>
                 <InputWithLabel label={'CPF'} value={cpf}/>
-                <InputWithLabel label={'Senha'} value={''}/>
+                <InputWithLabel label={'Senha'} type="password"/>
                 <div className=" flex gap-1 items-center ">
                     <button onClick={onClose} className="py-1  bg-zinc rounded-md w-full">
                         Cancelar

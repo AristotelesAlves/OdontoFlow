@@ -14,9 +14,11 @@
     "dotenv": "^16.4.5",
     "env": "^0.0.2",
     "jsonwebtoken": "^9.0.2",
+    "jspdf": "^2.5.2",
     "next": "14.2.11",
     "react": "^18",
     "react-dom": "^18",
+    "react-to-print": "^3.0.2",
     "tailwindcss-animated": "^1.1.2",
     "zoid": "^9.0.86"
   },

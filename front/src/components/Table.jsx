@@ -161,7 +161,7 @@ export default function Table({ data = [], acao = false, type }) {
             {isModalOpen && (
                 renderModal(type)
             )}
-            <table className="min-w-full">
+            <table className="w-full">
                 <thead>
                     <tr>
                         {data.length > 0 && Object.keys(data[0]).map((key) => (

@@ -3,8 +3,8 @@
 import RootLayout from "../../components/layout/RootLayout";
 import Table from "../../components/Table";
 import PagNavigation from "../../components/common/PagNavigation";
-import { Alert } from "../../components/modal/Alert";
 import { useState } from "react";
+import { UserModal } from "../../components/modal/UserModal";
 
 
 
@@ -21,7 +21,7 @@ export default function page(){
     return (
         <RootLayout>
             {modal && (
-                <Alert handleBtn={() => setModal(false)}/>
+                <UserModal onClose={() => setModal(false)}/>
             )}
             <div className="flex w-full justify-between">
                 <div className="flex flex-col gap-5 pt-2">
