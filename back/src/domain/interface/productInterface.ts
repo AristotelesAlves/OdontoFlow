@@ -4,12 +4,12 @@ export interface productInterface {
     descricao: string           
     dt_validade: Date     
     unidade_medida: string  
-    id_categoria?: number         
+    id_categoria?: number
+    preco: number         
     id_marca?: number  
     id_usuario_atualizacao: number | null
     id_usuario_cadastro: number   
-    status: boolean // essse aqui             
-    em_uso: boolean   // esse aqui             
+    status: boolean          
     dt_criacao: Date           
     dt_deletado: Date  | null     
     dt_atualizado: Date | null          

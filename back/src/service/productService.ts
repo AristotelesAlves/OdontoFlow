@@ -1,37 +1,18 @@
 import { productInterface } from "../domain/interface/productInterface";
-import { categoriaRepositoryInterface } from "../domain/repository/categoriaRepositoryInterface";
-import { marcaRepositoryInterface } from "../domain/repository/marcaRepositoryInterface";
 import { ProductRepositoryInterface } from "../domain/repository/productRepositoryInterface";
 
 export class ProductService {
     constructor(
-        private productRepository: ProductRepositoryInterface,
-        private categoryRepository: categoriaRepositoryInterface,
-        private brandRepository: marcaRepositoryInterface 
+        private productRepository: ProductRepositoryInterface
     ) {}
 
-    async create(data: Omit<productInterface, 'id' | 'dt_deletado' | 'dt_criacao' | 'dt_atualizado' | 'status' | 'em_uso'> 
-        & { nome_categoria?: string, nome_marca?: string }): Promise<{ statusCode: number; message?: string; data?: productInterface }> {
-
-        if (data.id_categoria) {
-            const categoryExists = await this.categoryRepository.findById(data.id_categoria);
-            if (!categoryExists && data.nome_categoria ) {
-                const newCategory = await this.categoryRepository.save({ nome: data.nome_categoria });
-                if (newCategory) {
-                    data.id_categoria = newCategory.id;
-                }
-            }
-        }
-
-        if (data.id_marca) {
-            const brandExists = await this.brandRepository.findById(data.id_marca);
-            if (!brandExists && data.nome_marca) {
-                const newBrand = await this.brandRepository.save({ nome: data.nome_marca });
-                if (newBrand) {
-                    data.id_marca = newBrand.id;
-                }
-            }
-        }
+    async create(data: Omit<productInterface, 'id' | 'dt_deletado' | 'dt_criacao' | 'dt_atualizado' | 'status' | 'id_usuario_atualizacao'> & {
+        nome_categoria: string;
+        nome_marca: string;
+        qt_estoque: number;
+        qt_compra: number;
+        qt_minima: number;
+    }): Promise<{ statusCode: number; message?: string; data?: productInterface }> {
 
         const newProduct = await this.productRepository.save(data);
 
@@ -47,5 +28,37 @@ export class ProductService {
             statusCode: 400,
             message: 'Error creating product'
         };
+    }
+
+    async findAll(page: number, limit: number): Promise<{ statusCode: number; data?: { produtos: productInterface[]; total: number } }> {
+        const { produtos, total } = await this.productRepository.findAll(page, limit);
+        return {
+            statusCode: 200,
+            data: { produtos, total },
+        };
+    }
+
+    async findById(id: number): Promise<{ statusCode: number; message?: string; data?: productInterface }> {
+        const product = await this.productRepository.findById(id);
+        if (!product) {
+            return { statusCode: 404, message: 'Product not found' };
+        }
+        return { statusCode: 200, data: product };
+    }
+
+    async update(id: number, data: Partial<Omit<productInterface, 'id' | 'dt_deletado' | 'dt_criacao' | 'dt_atualizado'>>): Promise<{ statusCode: number; message?: string; data?: productInterface }> {
+        const updatedProduct = await this.productRepository.update(id, data);
+        if (!updatedProduct) {
+            return { statusCode: 404, message: 'Product not found' };
+        }
+        return { statusCode: 200, message: 'Product updated successfully', data: updatedProduct };
+    }
+
+    async delete(id: number): Promise<{ statusCode: number; message?: string }> {
+        const deleted = await this.productRepository.delete(id);
+        if (!deleted) {
+            return { statusCode: 404, message: 'Product not found' };
+        }
+        return { statusCode: 200, message: 'Product deleted successfully' };
     }
 }
