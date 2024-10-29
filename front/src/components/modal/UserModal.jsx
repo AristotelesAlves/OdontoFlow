@@ -24,7 +24,7 @@ export function UserModal({nome, email, cpf, onClose, type}){
                 <InputWithLabel label={'CPF'} value={cpf}/>
                 <InputWithLabel label={'Senha'} type="password"/>
                 <div className=" flex gap-1 items-center ">
-                    <button onClick={onClose} className="py-1  bg-zinc rounded-md w-full">
+                    <button onClick={onClose} className="py-1  bg-zinc-opacity rounded-md w-full">
                         Cancelar
                     </button>
                     <button className="py-1  bg-blue text-white rounded-md w-full">

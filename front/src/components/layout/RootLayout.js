@@ -25,31 +25,31 @@ export default function RootLayout({ children }) {
     }
     return true
   }
-    // Logica de verificação de autenticação do usuário para paginas privadas
+     // Logica de verificação de autenticação do usuário para paginas privadas
 
-  //   useEffect(() => {
-  //     const user = get();
-  //     if (user && user.token) {
-  //         verifyAuthUser(user.token).then(isValid => {
-  //             if (!isValid) {
-  //                 remover()
-  //                 router.push('/login');
-  //             } else {
-  //                 setLoading(false);
-  //             }
-  //         });
-  //     } else {
-  //         router.push('/login'); 
-  //     }
-  // }, [router]);
+  //    useEffect(() => {
+  //      const user = get();
+  //      if (user && user.token) {
+  //          verifyAuthUser(user.token).then(isValid => {
+  //              if (!isValid) {
+  //                  remover()
+  //                  router.push('/login');
+  //              } else {
+  //                  setLoading(false);
+  //              }
+  //          });
+  //      } else {
+  //          router.push('/login'); 
+  //      }
+  //  }, [router]);
 
-  // if (loading) {
-  //   return (
-  //     <div className="h-screen w-screen flex items-center justify-center">
-  //       <img src="/gif_loading.gif"/>
-  //     </div>
-  //   ) 
-  // }
+  //  if (loading) {
+  //    return (
+  //      <div className="h-screen w-screen flex items-center justify-center">
+  //        <img src="/gif_loading.gif"/>
+  //      </div>
+  //    ) 
+  //  }
 
   return (
     <html lang="pt-br">

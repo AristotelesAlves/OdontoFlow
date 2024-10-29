@@ -13,6 +13,7 @@ module.exports = {
         'teal':'#81E6D9',
         'red':'#E53E3E',
         'zinc':'rgba(20, 20, 20)',
+        'zinc-opacity':'rgba(20, 20, 20,50)',
         'black':'rgba(20, 20, 20, 1)',
       },
     },
