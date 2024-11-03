@@ -6,12 +6,12 @@ export class ProductService {
         private productRepository: ProductRepositoryInterface
     ) {}
 
-    async create(data: Omit<productInterface, 'id' | 'dt_deletado' | 'dt_criacao' | 'dt_atualizado' | 'status' | 'id_usuario_atualizacao'> & {
+    async create(data: Omit<productInterface, 'id' | 'dt_deletado' | 'dt_criacao' | 'dt_atualizado' | 'status' | 'id_usuario_atualizacao' | 'id_marca' | 'id_categoria'> & {
         nome_categoria: string;
         nome_marca: string;
         qt_estoque: number;
-        qt_compra: number;
-        qt_minima: number;
+        qt_compra: number,
+        qt_minima: number
     }): Promise<{ statusCode: number; message?: string; data?: productInterface }> {
 
         const newProduct = await this.productRepository.save(data);

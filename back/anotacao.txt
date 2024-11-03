@@ -1,0 +1,5 @@
+
+End Point Produtos
+
+Buscar todos os produtos por paginação:
+    /products?page=1&limit=1

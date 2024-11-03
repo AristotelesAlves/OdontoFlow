@@ -1,72 +1,66 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { categoriaRepositoryInterface } from "../../domain/repository/categoriaRepositoryInterface";
-import { marcaRepositoryInterface } from "../../domain/repository/marcaRepositoryInterface";
 import { ProductRepositoryInterface } from "../../domain/repository/productRepositoryInterface";
-import { createdProductChema } from "../../domain/schemaZoid/productChemaZoid";
 import { ProductService } from "../../service/productService";
+import { createdProductChema, findAllProduct } from "../../domain/schemaZoid/productChemaZoid";
+import { ZodError } from "zod";
 
 export class ProductController {
-    private service: ProductService;
 
-    constructor(
-        private productRepository: ProductRepositoryInterface,
-        private categoryRepository: categoriaRepositoryInterface,
-        private brandRepository: marcaRepositoryInterface 
+    private service
+
+    constructor (
+        private memory:ProductRepositoryInterface
     ) {
-        this.service = new ProductService(this.productRepository);
+        this.service = new ProductService(this.memory)
     }
 
-    async create(req: FastifyRequest, reply: FastifyReply) {
+    async create(req: FastifyRequest, reply: FastifyReply){
         try {
-            const data = createdProductChema.parse(req.body);
-            const result = await this.service.create(data);
-            reply.status(result.statusCode).send({
-                message: result.message,
-                data: result.data,
-            });
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return reply.status(400).send({ message: 'Invalid data', errors: error.errors });
+            const data = createdProductChema.parse(req.body)
+            const result = await this.service.create(data)
+
+            if (result.statusCode === 201) {
+                reply.code(201).send(result);
+            } else {
+                reply.code(result.statusCode).send(result);
             }
-            reply.status(500).send({ message: 'Internal server error' });
+            
+        } catch (error) {
+            console.error('Error creating product:', error);
+            if (error instanceof ZodError) {
+                reply.code(400).send({ message: "Validation error", issues: error.issues });
+            } else {
+                reply.code(500).send({ message: "Internal server error" });
+            }
         }
     }
 
-    async findAll(req: FastifyRequest, reply: FastifyReply) {
-        const page = parseInt(req.query.page as string) || 1;
-        const limit = parseInt(req.query.limit as string) || 10;
-
-        const result = await this.service.findAll(page, limit);
-        reply.status(result.statusCode).send(result.data);
+    async findAll(req: FastifyRequest, reply: FastifyReply){
+        try {
+            const { page, limit } = findAllProduct.parse(req.query);
+            const result = await this.service.findAll(Number(page), Number(limit));
+            if (result.statusCode === 200) {
+                reply.code(200).send(result.data);
+            } else {
+                reply.code(result.statusCode).send(result);
+            }
+            
+        } catch (error) {
+            console.error('Error creating product:', error);
+            if (error instanceof ZodError) {
+                reply.code(400).send({ message: "Validation error", issues: error.issues });
+            } else {
+                reply.code(500).send({ message: "Internal server error" });
+            }
+        }
     }
 
-    async findById(req: FastifyRequest, reply: FastifyReply) {
-        const id = parseInt(req.params.id as string);
-        const result = await this.service.findById(id);
 
-        reply.status(result.statusCode).send({
-            message: result.message,
-            data: result.data,
-        });
+    async findById(req: FastifyRequest, reply: FastifyReply){
+        const data = req.params
+        console.log(data)
+        reply.code(200).send('Olá meu amigo')
     }
 
-    async update(req: FastifyRequest, reply: FastifyReply) {
-        const id = parseInt(req.params.id as string);
-        const data = req.body; 
 
-        const result = await this.service.update(id, data);
-        reply.status(result.statusCode).send({
-            message: result.message,
-            data: result.data,
-        });
-    }
-
-    async delete(req: FastifyRequest, reply: FastifyReply) {
-        const id = parseInt(req.params.id as string);
-        const result = await this.service.delete(id);
-
-        reply.status(result.statusCode).send({
-            message: result.message,
-        });
-    }
 }

@@ -1,3 +1,4 @@
+
 export interface storeInterface{
     id: number
     id_produto: number
@@ -5,4 +6,5 @@ export interface storeInterface{
     qt_estoque: number
     qt_minima: number
     qt_compra: number
+
 }
