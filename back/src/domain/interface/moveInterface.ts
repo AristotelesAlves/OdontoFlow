@@ -1,4 +1,5 @@
 export interface moveInterface {
+    id: number,
     type: 'uso' | 'saida' | 'entrada',
     userId: number,
     id_clinica : number,
