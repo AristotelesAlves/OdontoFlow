@@ -3,3 +3,240 @@ End Point Produtos
 
 Buscar todos os produtos por paginação:
     /products?page=1&limit=1
+
+A documentação das rotas é uma parte fundamental para facilitar o entendimento e uso da API. A seguir, vou criar uma documentação com base nas rotas que você mencionou. Essa documentação vai detalhar os endpoints, métodos HTTP, parâmetros de entrada e respostas.
+
+## **Documentação da API**
+
+### **1. Rotas de Movimentação (Move)**
+
+#### **POST `/move`** - Criar uma nova movimentação
+- **Descrição**: Cria uma nova movimentação de estoque (entrada, saída ou uso).
+- **Parâmetros de corpo** (Body):
+  
+  ```json
+  {
+    "destino": "string",                 // Destino da movimentação (ex: armazém, loja, etc.)
+    "tipo": "entrada" | "saida" | "uso", // Tipo da movimentação (entrada, saída, uso)
+    "id_clinica": 123,                   // ID da clínica
+    "id_usuario": 456,                   // ID do usuário responsável pela movimentação
+    "produto_movimentaao": [             // Lista de produtos que estão sendo movimentados
+      {
+        "id": 1,                          // ID do produto
+        "quantidade": 10                  // Quantidade movimentada
+      }
+    ]
+  }
+  ```
+
+- **Resposta**:
+  - **Status 201 (Created)**: Movimentação criada com sucesso.
+  
+  ```json
+  {
+    "statusCode": 201,
+    "message": "Movimentação criada com sucesso",
+    "data": {
+      "id": 1,   // ID da movimentação
+      "destino": "Armazém",
+      "tipo": "entrada",
+      "id_clinica": 123,
+      "id_usuario": 456,
+      "produto_movimentaao": [
+        {
+          "id": 1,
+          "quantidade": 10
+        }
+      ]
+    }
+  }
+  ```
+
+  - **Status 400 (Bad Request)**: Caso ocorra um erro de validação ou de dados faltando.
+
+#### **GET `/move`** - Listar movimentações (com paginação)
+- **Descrição**: Lista as movimentações de estoque com suporte a paginação.
+- **Parâmetros de query**:
+  
+  ```text
+  page: string  // Número da página para paginação (obrigatório)
+  limit: string // Quantidade de registros por página (obrigatório)
+  ```
+
+- **Resposta**:
+  
+  - **Status 200 (OK)**: Retorna uma lista de movimentações.
+  
+  ```json
+  {
+    "statusCode": 200,
+    "data": [
+      {
+        "id": 1,
+        "destino": "Armazém",
+        "tipo": "entrada",
+        "id_clinica": 123,
+        "id_usuario": 456,
+        "produto_movimentaao": [
+          {
+            "id": 1,
+            "quantidade": 10
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "destino": "Loja",
+        "tipo": "saida",
+        "id_clinica": 123,
+        "id_usuario": 789,
+        "produto_movimentaao": [
+          {
+            "id": 2,
+            "quantidade": 5
+          }
+        ]
+      }
+    ]
+  }
+  ```
+
+  - **Status 400 (Bad Request)**: Caso os parâmetros de query sejam inválidos ou faltando.
+
+#### **PUT `/move/:id/estorno`** - Estornar uma movimentação
+- **Descrição**: Estorna uma movimentação específica pelo ID (reverte a movimentação).
+- **Parâmetros de URL**:
+  - `id`: ID da movimentação a ser estornada.
+  
+- **Resposta**:
+  - **Status 200 (OK)**: Movimentação estornada com sucesso.
+  
+  ```json
+  {
+    "statusCode": 200,
+    "message": "Movimentação estornada com sucesso",
+    "data": {
+      "id": 1,
+      "destino": "Armazém",
+      "tipo": "entrada",
+      "id_clinica": 123,
+      "id_usuario": 456,
+      "produto_movimentaao": [
+        {
+          "id": 1,
+          "quantidade": 10
+        }
+      ]
+    }
+  }
+  ```
+
+  - **Status 404 (Not Found)**: Caso o ID da movimentação não seja encontrado.
+
+---
+
+### **2. Rotas de Produto (Product)**
+
+#### **POST `/product`** - Criar um novo produto
+- **Descrição**: Cria um novo produto no estoque.
+- **Parâmetros de corpo** (Body):
+  
+  ```json
+  {
+    "nome": "Produto X",
+    "preco": 100.00,
+    "qt_compra": 50,
+    "descricao": "Produto de exemplo",
+    "data_validade": "2024-12-31T00:00:00.000Z",
+    "qt_estoque": 100,
+    "qt_minima": 10,
+    "unidade_medida": "un",
+    "nome_categoria": "Categoria A",
+    "nome_marca": "Marca X",
+    "id_usuario_atualizacao": 1,
+    "id_usuario_cadastro": 1,
+    "id_clinica": 123
+  }
+  ```
+
+- **Resposta**:
+  - **Status 201 (Created)**: Produto criado com sucesso.
+
+#### **GET `/products`** - Listar todos os produtos
+- **Descrição**: Lista todos os produtos cadastrados.
+  
+- **Resposta**:
+  - **Status 200 (OK)**: Retorna uma lista de produtos.
+
+#### **GET `/product:id`** - Buscar um produto pelo ID
+- **Descrição**: Busca um produto específico pelo ID.
+  
+- **Resposta**:
+  - **Status 200 (OK)**: Retorna o produto solicitado.
+
+---
+
+### **3. Rotas de Usuário (User)**
+
+#### **POST `/login`** - Login do usuário
+- **Descrição**: Realiza o login do usuário com email e senha.
+- **Parâmetros de corpo** (Body):
+  
+  ```json
+  {
+    "email": "usuario@example.com",
+    "senha": "senha123"
+  }
+  ```
+
+- **Resposta**:
+  - **Status 200 (OK)**: Retorna um token JWT para autenticação.
+
+#### **POST `/auth/verify`** - Verificar a validade do token JWT
+- **Descrição**: Verifica a validade do token JWT enviado no cabeçalho.
+
+- **Resposta**:
+  - **Status 200 (OK)**: Retorna uma mensagem indicando que o token é válido.
+
+#### **POST `/register`** - Registrar um novo usuário
+- **Descrição**: Cria um novo usuário.
+- **Parâmetros de corpo** (Body):
+  
+  ```json
+  {
+    "email": "usuario@example.com",
+    "senha": "senha123",
+    "cpf": "123456789012",
+    "nome": "Nome Completo"
+  }
+  ```
+
+- **Resposta**:
+  - **Status 201 (Created)**: Usuário registrado com sucesso.
+
+#### **GET `/users`** - Listar usuários
+- **Descrição**: Lista todos os usuários cadastrados.
+  
+- **Resposta**:
+  - **Status 200 (OK)**: Retorna uma lista de usuários.
+
+---
+
+### **4. Schemas de Validação (Zod)**
+
+#### **Schemas utilizados para validação**:
+
+- **`createMoveSchema`**: Valida os dados para criação de movimentações.
+- **`findAllMoveSchema`**: Valida os parâmetros de query para paginação de movimentações.
+- **`createdProductChema`**: Valida os dados para criação de produtos.
+- **`loginSchema`**: Valida os dados para login de usuários.
+- **`registerSchema`**: Valida os dados para registro de novos usuários.
+
+### Conclusão
+
+Essas rotas fazem parte de uma API para gerenciar produtos, movimentações de estoque e usuários. Com isso, você tem endpoints para:
+- Criar e listar movimentações de estoque.
+- Criar, listar e buscar produtos.
+- Realizar login, registro e verificação de usuários.
+
+A validação das entradas é feita utilizando Zod para garantir que os dados enviados estejam no formato correto.

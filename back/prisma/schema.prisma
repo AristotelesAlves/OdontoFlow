@@ -6,9 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
+
 model Clinica {
   id            Int            @id @default(autoincrement())
   nome          String
@@ -101,6 +102,7 @@ model Estoque {
   quantidade_minima Int
   produto           Produto @relation(fields: [id_produto], references: [id])
   clinica           Clinica @relation(fields: [id_clinica], references: [id])
+  @@unique([id_produto, id_clinica]) 
 }
 
 model Marca {

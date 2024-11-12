@@ -5,7 +5,7 @@ export const createdProductChema = z.object({
     preco: z.number(),
     qt_compra: z.number(),
     descricao: z.string(),
-    dt_validade: z.date(),
+    data_validade: z.date(),
     qt_estoque: z.number(),
     qt_minima: z.number(),
     unidade_medida: z.string().max(4),

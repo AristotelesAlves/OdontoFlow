@@ -6,14 +6,15 @@ import { moveRepositoryInterface } from "../../domain/repository/moveRepositoryI
 export class MovePrisma implements moveRepositoryInterface {
 
     async create(data: Omit<moveInterface, 'id'>): Promise<moveInterface | null> {
+        // Iniciar a criação da movimentação
         const newMove = await prisma.movimentacao.create({
             data: {
                 destino: data.destino,
-                tipo: data.type,
-                estorno: false, // Marca como não estornado inicialmente
+                tipo: data.tipo,
+                estorno: false,  // Marca como não estornado inicialmente
                 dt_movimentacao: new Date(),
                 id_clinica: data.id_clinica,
-                id_usuario: data.userId,
+                id_usuario: data.id_usuario,
                 movimentacoesProduto: {
                     create: data.produto_movimentaao.map(produto => ({
                         id_produto: produto.id,
@@ -27,68 +28,159 @@ export class MovePrisma implements moveRepositoryInterface {
             },
         });
 
-        // Se o tipo for "produto em uso", cria um registro na tabela 'produto_uso'
-        if (newMove.tipo === "produto em uso") {
-            for (const produto of data.produto_movimentaao) {
+        if (!newMove) {
+            return null;
+        }
+
+        // Lógica para alterar o estoque com base no tipo de movimentação
+        if (data.tipo === 'entrada') {
+            // Aumenta o estoque para cada produto movimentado
+            await Promise.all(data.produto_movimentaao.map(async (produto) => {
+                const estoque = await prisma.estoque.findUnique({
+                    where: {
+                        id_produto_id_clinica: {
+                            id_produto: produto.id,
+                            id_clinica: data.id_clinica,
+                        }
+                    }
+                });
+
+                if (!estoque) {
+                    // Se não houver estoque para o produto, cria um novo
+                    await prisma.estoque.create({
+                        data: {
+                            id_produto: produto.id,
+                            id_clinica: data.id_clinica,
+                            estoque: produto.quantidade,
+                            quantidade_minima: 0,  // Ajuste conforme necessário
+                        },
+                    });
+                } else {
+                    // Se o estoque existir, apenas adiciona a quantidade
+                    await prisma.estoque.update({
+                        where: {
+                            id_produto_id_clinica: {
+                                id_produto: produto.id,
+                                id_clinica: data.id_clinica,
+                            }
+                        },
+                        data: {
+                            estoque: estoque.estoque + produto.quantidade,
+                        },
+                    });
+                }
+            }));
+        } else if (data.tipo === 'saida') {
+            // Diminui o estoque para cada produto movimentado
+            await Promise.all(data.produto_movimentaao.map(async (produto) => {
+                const estoque = await prisma.estoque.findUnique({
+                    where: {
+                        id_produto_id_clinica: {
+                            id_produto: produto.id,
+                            id_clinica: data.id_clinica,
+                        }
+                    }
+                });
+
+                if (!estoque || estoque.estoque < produto.quantidade) {
+                    // Se não houver estoque suficiente, lança um erro ou retorna um aviso
+                    throw new Error(`Estoque insuficiente para o produto ${produto.id}`);
+                }
+
+                // Se o estoque for suficiente, subtrai a quantidade
+                await prisma.estoque.update({
+                    where: {
+                        id_produto_id_clinica: {
+                            id_produto: produto.id,
+                            id_clinica: data.id_clinica,
+                        }
+                    },
+                    data: {
+                        estoque: estoque.estoque - produto.quantidade,
+                    },
+                });
+            }));
+        } else if (data.tipo === 'uso') {
+            // Para "uso", se você quiser registrar o uso, pode criar uma entrada na tabela ProdutoUso
+            await Promise.all(data.produto_movimentaao.map(async (produto) => {
                 await prisma.produtoUso.create({
                     data: {
                         id_produto: produto.id,
                         quantidade: produto.quantidade,
                         id_movimentacao: newMove.id,
+                        dt_inicio: new Date(),  // Data de início do uso
                     },
                 });
-            }
+            }));
         }
 
-        // Retorna a movimentação criada
-        if (newMove) {
-            return newMove;
-        }
-
-        return null;
+        return {
+            id: newMove.id,
+            tipo: newMove.tipo,
+            id_usuario: newMove.id_usuario,
+            id_clinica: newMove.id_clinica,
+            destino: newMove.destino,
+            estorno: newMove.estorno,
+            dt_movimentacao: newMove.dt_movimentacao,
+            produto_movimentaao: newMove.movimentacoesProduto.map(produto => ({
+                id: produto.id_produto,
+                quantidade: produto.quantidade,
+            })),
+        };
     }
-
-    // Método para obter movimentações com paginação
+    
     async getPaginatedMovements(page: number, pageSize: number): Promise<moveInterface[]> {
-        const skip = (page - 1) * pageSize;  // Cálculo do deslocamento para a página
-        const take = pageSize;  // Quantidade de registros por página
+        const skip = (page - 1) * pageSize; 
+        const take = pageSize;  
 
         const movimentacoes = await prisma.movimentacao.findMany({
             skip,
             take,
             include: {
-                movimentacoesProduto: true, // Incluir os produtos movimentados
+                movimentacoesProduto: true, 
             },
         });
 
-        return movimentacoes;
+        return movimentacoes.map(mov => ({
+            id: mov.id,
+            type: mov.tipo,
+            userId: mov.id_usuario,
+            estorno: mov.estorno,
+            id_usuario: mov.id_usuario,
+            tipo: mov.tipo,
+            id_clinica: mov.id_clinica,
+            destino: mov.destino,
+            dt_movimentacao: mov.dt_movimentacao,
+            produto_movimentaao: mov.movimentacoesProduto.map(produto => ({
+                id: produto.id_produto,
+                quantidade: produto.quantidade,
+            })),
+        }));
     }
 
-    // Função para estornar uma movimentação
-    async estornar(id: number): Promise<moveInterface | null> {
-        // Atualiza a movimentação, marcando ela como estornada
+    async estornar(id: number): Promise<boolean> {
         const estorno = await prisma.movimentacao.update({
             where: {
                 id: id,
             },
             data: {
-                estorno: true, // Marca como estornada
+                estorno: true, 
                 movimentacoesProduto: {
                     updateMany: {
                         where: {
                             id_movimentacao: id,
                         },
                         data: {
-                            estorno: true, // Marca os produtos como estornados
+                            estorno: true, 
                         },
                     },
                 },
             },
             include: {
-                movimentacoesProduto: true,  // Inclui os produtos estornados na resposta
+                movimentacoesProduto: true
             },
         });
-
-        return estorno;
+    
+        return estorno ? true : false;
     }
 }

@@ -1,7 +1,8 @@
 export interface moveInterface {
     id: number,
-    type: 'uso' | 'saida' | 'entrada',
-    userId: number,
+    tipo: string,
+    id_usuario: number,
+    estorno: boolean,
     id_clinica : number,
     destino: string,
     dt_movimentacao: Date,  
