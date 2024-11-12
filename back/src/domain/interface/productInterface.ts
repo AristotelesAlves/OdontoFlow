@@ -2,7 +2,7 @@ export interface productInterface {
     id: number
     nome: string            
     descricao: string           
-    dt_validade: Date     
+    data_validade: Date     
     unidade_medida: string  
     id_categoria?: number
     preco: number         

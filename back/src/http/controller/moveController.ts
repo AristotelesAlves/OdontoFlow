@@ -13,7 +13,6 @@ export class moveConctroller{
     // }
 
     async move(req: FastifyRequest, reply: FastifyReply){
-
         try {
             const data = newMoveZod.parse(req.body)
             reply.send(data)

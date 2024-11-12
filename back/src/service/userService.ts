@@ -81,14 +81,14 @@ export class UserService{
 
         if(!result){
             return {
-                statusCode: 400,
-                message: 'Email already in use'
+                statusCode: 201,
+                message: 'User registered successfully'
             }
         }
 
         return {
-            statusCode: 201,
-            message: 'User registered successfully'
+            statusCode: 400,
+            message: 'erro desconhecido!'
         }
 
     }

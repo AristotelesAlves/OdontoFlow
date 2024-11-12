@@ -6,10 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
-
 model Clinica {
   id            Int            @id @default(autoincrement())
   nome          String
@@ -36,7 +35,7 @@ model Usuario {
   dt_criacao    DateTime       @default(now())
   dt_deletado   DateTime?
   dt_atualizado DateTime       @updatedAt
-  id_clinica    Int
+  id_clinica    Int 
   clinica       Clinica        @relation(fields: [id_clinica], references: [id])
   perfil        PerfilUsuario?
   recuperacao   Recuperacao[]
@@ -76,13 +75,14 @@ model Produto {
   unidade_medida         String
   id_categoria           Int
   id_marca               Int
-  id_usuario_atualizacao Int
+  id_usuario_atualizacao Int?
+  preco                  Float
   id_usuario_cadastro    Int
   status                 Boolean
-  em_uso                 Boolean
   dt_criacao             DateTime              @default(now())
   dt_deletado            DateTime?
   dt_atualizado          DateTime              @updatedAt
+  dt_validade            DateTime?
   id_clinica             Int
   clinica                Clinica               @relation(fields: [id_clinica], references: [id])
   marca                  Marca                 @relation(fields: [id_marca], references: [id])
@@ -90,6 +90,7 @@ model Produto {
   estoques               Estoque[]
   movimentacoesProduto   MovimentacaoProduto[]
   listasCompra           ListaCompra[]
+  ProdutoUso             ProdutoUso[]
 }
 
 model Estoque {
@@ -104,13 +105,13 @@ model Estoque {
 
 model Marca {
   id       Int       @id @default(autoincrement())
-  nome     String
+  nome     String    @unique
   produtos Produto[]
 }
 
 model Categoria {
   id       Int       @id @default(autoincrement())
-  nome     String
+  nome     String    @unique
   produtos Produto[]
 }
 
@@ -127,11 +128,25 @@ model Movimentacao {
   id_usuario           Int
   id_clinica           Int
   tipo                 String
+  estorno              Boolean
   destino              String
   dt_movimentacao      DateTime              @default(now())
   usuario              Usuario               @relation(fields: [id_usuario], references: [id])
   clinica              Clinica               @relation(fields: [id_clinica], references: [id])
   movimentacoesProduto MovimentacaoProduto[]
+  ProdutoUso           ProdutoUso[]
+}
+
+model ProdutoUso {
+  id                Int       @id @default(autoincrement())
+  id_produto        Int
+  quantidade        Int
+  id_movimentacao   Int
+  dt_inicio         DateTime  @default(now())
+  dt_fim            DateTime?
+  movimentacao      Movimentacao @relation(fields: [id_movimentacao], references: [id])
+  produto           Produto @relation(fields: [id_produto], references: [id])
+
 }
 
 model MovimentacaoProduto {
@@ -139,6 +154,7 @@ model MovimentacaoProduto {
   id_movimentacao Int
   id_produto      Int
   quantidade      Int
+  estorno         Boolean
   movimentacao    Movimentacao @relation(fields: [id_movimentacao], references: [id])
   produto         Produto      @relation(fields: [id_produto], references: [id])
 }
