@@ -161,6 +161,9 @@ CREATE UNIQUE INDEX "Usuario_email_key" ON "Usuario"("email");
 CREATE UNIQUE INDEX "PerfilUsuario_id_usuario_key" ON "PerfilUsuario"("id_usuario");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Estoque_id_produto_id_clinica_key" ON "Estoque"("id_produto", "id_clinica");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Marca_nome_key" ON "Marca"("nome");
 
 -- CreateIndex

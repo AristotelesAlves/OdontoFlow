@@ -78,25 +78,11 @@ export default function Table({ data = [], acao = false, type }) {
     }
 
 
-    function renderCell(key, value, item, index){
-        
+    function renderCell(key, value, item, index) {
         const status = (item.STATUS?.toLowerCase() ?? '');
-
-        if (key.trim() === 'STATUS') {
-            return (
-                <div className='flex gap-2 items-center font-semibold'>
-                    <div className={`${renderBackgroundColor(status)} p-1 rounded-full text-white`}>
-                        {renderStatusIcon(item.STATUS.toLowerCase())}
-                    </div>
-                    <p className={`${renderTextColor(status)}`}>
-                        {value}
-                    </p>
-                </div>
-            );
-        }
-
+    
         if (key.trim() === 'QTD_DO_PRODUTOS') {
-            if(type !== 'lista compras'){
+            if(type !== 'lista compras') {
                 const percentage = (value / item.estoque_progresso) * 100;
                 return (
                     <div className="flex items-center gap-2">
@@ -107,24 +93,30 @@ export default function Table({ data = [], acao = false, type }) {
                             {value}/{item.estoque_progresso}
                         </p>
                     </div>
-                )
-
+                );
             }
-
-            return value
+            return value;
         }
-
-        if (key.trim().toUpperCase() === 'ESTOQUE_PROGRESSO') return null;
-
-        if (key.trim() === 'STATUS') {
+    
+        if (key.trim() === 'produto_movimentaao') {
+            // Caso seja um array de objetos como { id, quantidade }
+            return (
+                <ul>
+                    {value.map((produto, i) => (
+                        <li key={i}>Produto ID: {produto.id}, Quantidade: {produto.quantidade}</li>
+                    ))}
+                </ul>
+            );
         }
-
-        if (acao && key === 'acao') {
-            return renderActionCell(item, index);
+    
+        // Caso o valor seja um objeto, não renderize diretamente
+        if (typeof value === 'object') {
+            return JSON.stringify(value); // Exibe como string se for um objeto
         }
-
+    
         return value;
-    };
+    }
+    
 
     function renderActionCell(item, index){
         return (

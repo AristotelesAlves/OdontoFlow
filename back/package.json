@@ -2,6 +2,9 @@
   "name": "odonto_flow",
   "version": "1.0.0",
   "main": "index.ts",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "test": "vitest"

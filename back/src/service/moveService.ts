@@ -7,7 +7,7 @@ export class MoveService {
     ) {}
 
     // Método para criar uma movimentação de estoque
-    async create(data: Omit<moveInterface, 'id'>): Promise<{ statusCode: number; message?: string; data?: moveInterface }> {
+    async create(data: Omit<moveInterface, 'id'>) {
         try {
             const newMove = await this.moveRepository.create(data);
 
@@ -31,7 +31,7 @@ export class MoveService {
         }
     }
     
-    async findAll(page: number, pageSize: number): Promise<{ statusCode: number; message?: string; data?: { movimentacoes: moveInterface[]; total: number } }> {
+    async findAll(page: number, pageSize: number){
         try {
             const movimentacoes = await this.moveRepository.getPaginatedMovements(page, pageSize);
             
@@ -45,8 +45,7 @@ export class MoveService {
             return {
                 statusCode: 200,
                 data: {
-                    movimentacoes,
-                    total: movimentacoes.length, // Pode ser ajustado se você retornar o total real do banco
+                    movimentacoes
                 },
             };
         } catch (error) {

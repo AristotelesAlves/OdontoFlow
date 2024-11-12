@@ -3,6 +3,15 @@ import { moveInterface } from "../../domain/interface/moveInterface";
 import { moveRepositoryInterface } from "../../domain/repository/moveRepositoryInterface";
 
 
+interface returnMove{
+    id: number,
+    usuario: string,
+    destino: string,
+    dt_movimentacao: Date,
+    estorno: boolean,
+    tipo: string,
+  }
+
 export class MovePrisma implements moveRepositoryInterface {
 
     async create(data: Omit<moveInterface, 'id'>): Promise<moveInterface | null> {
@@ -129,7 +138,7 @@ export class MovePrisma implements moveRepositoryInterface {
         };
     }
     
-    async getPaginatedMovements(page: number, pageSize: number): Promise<moveInterface[]> {
+    async getPaginatedMovements(page: number, pageSize: number): Promise<returnMove[]> {
         const skip = (page - 1) * pageSize; 
         const take = pageSize;  
 
@@ -137,24 +146,22 @@ export class MovePrisma implements moveRepositoryInterface {
             skip,
             take,
             include: {
-                movimentacoesProduto: true, 
+                movimentacoesProduto: {
+                    include:{
+                        produto: true
+                    },
+                },
+                usuario:true,
             },
         });
 
         return movimentacoes.map(mov => ({
             id: mov.id,
-            type: mov.tipo,
-            userId: mov.id_usuario,
-            estorno: mov.estorno,
-            id_usuario: mov.id_usuario,
-            tipo: mov.tipo,
-            id_clinica: mov.id_clinica,
+            usuario: mov.usuario.nome_usuario,
             destino: mov.destino,
             dt_movimentacao: mov.dt_movimentacao,
-            produto_movimentaao: mov.movimentacoesProduto.map(produto => ({
-                id: produto.id_produto,
-                quantidade: produto.quantidade,
-            })),
+            estorno: mov.estorno,
+            tipo: mov.tipo
         }));
     }
 
