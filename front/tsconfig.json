@@ -27,7 +27,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/util/checkRouterPrivate.js", "src/config/appRoutes/index.js", "src/config/env/index.js"  ],
+, "src/util/checkRouterPrivate.js", "src/config/appRoutes/index.js", "src/config/env/index.js", "src/components/modal/CadastroProduto.jsx", "src/components/modal/ConfigModal.jsx", "src/components/modal/Movimentacao.jsx", "src/components/modal/ProdutoUso.jsx"  ],
   "exclude": [
     "node_modules"
   ]
