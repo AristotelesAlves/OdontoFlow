@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowsLeftRight, FirstAid } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, ArrowRight, ArrowsClockwise, ArrowsLeftRight, FirstAid } from "@phosphor-icons/react/dist/ssr";
 import RootLayout from "../../components/layout/RootLayout";
 import Table from "../../components/Table";
 import { useEffect, useState } from "react";
@@ -33,6 +33,7 @@ export default function page(){
         fetchData();
     }, [page]);
       
+    console.log(data)
 
     return (
         <RootLayout>
@@ -143,24 +144,49 @@ export default function page(){
                     </ul>
                 </div>
             </div>
-            <div className="">
-                <table className="min-w-full">
+            <div className="flex w-full h-full">
+                <table className="min-w-full w-full overflow-y-scroll">
                     <thead>
                         <tr>
-                            <th className="px-4 py-2 text-start ">ID</th>
                             <th className="px-4 py-2 text-start ">Usuário</th>
                             <th className="px-4 py-2 text-start ">Destino</th>
-                            <th className="px-4 py-2 text-start ">Data Movimentação</th>
-                            <th className="px-4 py-2 text-start ">Ações</th>
+                            <th className="px-4 py-2 text-start ">Data e hora</th>
+                            <th className="px-4 py-2 text-start ">Status</th>
+                            <th className="px-4 py-2 text-start ">Ação</th>
                         </tr>
                     </thead>
                     <tbody>
                         {data.length > 0 ? data.map((mov) => (
                             <tr key={mov.id} className={`-b ${mov.estorno ? 'bg-gray-200' : ''}`}>
-                                <td className="px-4 py-2 text-start">{mov.id}</td>
                                 <td className="px-4 py-2 text-start">{mov.usuario}</td>
-                                <td className="px-4 py-2 text-start">{mov.destino}</td>
+                                <td className="px-4 py-2 text-start">{mov.destino} </td>
                                 <td className="px-4 py-2 text-start">{new Date(mov.dt_movimentacao).toLocaleString()}</td> {/* Formata a data com hora */}
+                                <td className="px-4 py-2 text-start">
+                                    {mov.tipo === 'saida' && (
+                                        <div className="flex gap-1 items-center text-red">
+                                            <div className="p-1 rounded-full bg-red text-white">
+                                                <ArrowLeft />
+                                            </div>
+                                            <span>Saída</span>
+                                        </div>
+                                    )}
+                                    {mov.tipo === 'entrada' && (
+                                        <div className="flex gap-1 items-center text-blue">
+                                            <div className="p-1 rounded-full bg-blue text-white">
+                                                <ArrowRight />
+                                            </div>
+                                            <span>Entrada</span>
+                                        </div>
+                                    )}
+                                    {mov.tipo === 'uso' && (
+                                        <div className="flex gap-1 items-center text-black">
+                                            <div className="p-1 rounded-full bg-black text-white">
+                                                <ArrowsClockwise/>
+                                            </div>
+                                            <span>Em uso</span>
+                                        </div>
+                                    )}
+                                </td>
                                 <td className="px-4 py-2 text-start">
                                     {mov.estorno ? (
                                         <span className="text-red-500"><X size={20} /></span> // Ícone de X para estornados

@@ -53,7 +53,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="pt-br">
-      <body className="flex flex-col gap-4 h-screen w-screen overflow-auto px-10">
+      <body className="flex flex-col gap-4 h-screen w-full overflow-y-scroll px-10 ">
         <Header />
         {children}
       </body>

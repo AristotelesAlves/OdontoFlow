@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"; 
 import LayoutModal from "../layout/LayoutModal";
 import InputWithLabel from "../common/Input";
+import {Trash} from "@phosphor-icons/react/dist/ssr";
+
 
 export function Movimentacao({ onClose }) {
     const [destino, setDestino] = useState(''); // Destino da movimentação
@@ -30,21 +32,21 @@ export function Movimentacao({ onClose }) {
         }
     };
 
-    // Efeito para filtrar os produtos quando o termo de pesquisa mudar
+
     useEffect(() => {
         fetchProdutos();
     }, [searchTerm]);
 
-    // Função para adicionar um produto à lista de movimentação
+
     const adicionarProduto = (produto) => {
         setProdutoMovimentacao((prevProdutos) => [
             ...prevProdutos,
-            { ...produto, quantidade: 1 }, // Adiciona uma quantidade inicial de 1
+            { ...produto, quantidade: 1 }, 
         ]);
-        setSearchTerm(""); // Limpar a busca após adicionar o produto
+        setSearchTerm("");
     };
 
-    // Função para atualizar a quantidade de um produto
+
     const atualizarQuantidade = (id, quantidade) => {
         setProdutoMovimentacao((prevProdutos) =>
             prevProdutos.map((produto) =>
@@ -53,14 +55,14 @@ export function Movimentacao({ onClose }) {
         );
     };
 
-    // Função para remover um produto da lista de movimentação
+
     const removerProduto = (produtoId) => {
         setProdutoMovimentacao((prevProdutos) =>
             prevProdutos.filter((produto) => produto.id !== produtoId)
         );
     };
 
-    // Função para enviar os dados para o backend
+   
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -177,7 +179,7 @@ export function Movimentacao({ onClose }) {
                                         className="text-red-500"
                                         onClick={() => removerProduto(produto.id)}
                                     >
-                                        Remover
+                                        <Trash size={32} />
                                     </button>
                                 </li>
                             ))}

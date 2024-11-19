@@ -56,6 +56,7 @@ CREATE TABLE "Produto" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "nome" TEXT NOT NULL,
     "descricao" TEXT NOT NULL,
+    "fornecedor" TEXT NOT NULL,
     "data_validade" DATETIME NOT NULL,
     "unidade_medida" TEXT NOT NULL,
     "id_categoria" INTEGER NOT NULL,

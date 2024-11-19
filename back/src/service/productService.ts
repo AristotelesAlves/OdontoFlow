@@ -30,8 +30,9 @@ export class ProductService {
         };
     }
 
-    async findAll(page: number, limit: number): Promise<{ statusCode: number; data?: { produtos: productInterface[]; total: number } }> {
+    async findAll(page: number, limit: number){
         const { produtos, total } = await this.productRepository.findAll(page, limit);
+        console.log(produtos)
         return {
             statusCode: 200,
             data: { produtos, total },

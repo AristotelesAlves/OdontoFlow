@@ -72,6 +72,7 @@ model Produto {
   id                     Int                   @id @default(autoincrement())
   nome                   String
   descricao              String
+  fornecedor             String
   data_validade          DateTime
   unidade_medida         String
   id_categoria           Int

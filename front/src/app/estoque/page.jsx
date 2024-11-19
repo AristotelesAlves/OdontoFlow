@@ -3,70 +3,95 @@ import RootLayout from "../../components/layout/RootLayout";
 import { useState, useEffect } from "react";
 import PagNavigation from "../../components/common/PagNavigation";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
-import { CadastroProduto } from "../../components/modal/CadastroProduto";
+import ProdutoModal from "../../components/modal/CadastroProduto";
 import { Movimentacao } from "../../components/modal/Movimentacao";
 import { ProdutoEmUso } from "../../components/modal/ProdutoUso";
-
+import apiService from "../../serive/apiService";
+import { DotsThree } from "@phosphor-icons/react/dist/ssr";
 
 export default function Page() {
     const [pagProdutoUso, setPagProdutoUso] = useState(false);
+    const [activeMenu, setActiveMenu] = useState(null); 
     const [openModal, setOpenModal] = useState({
         cadastroProduto: false,
         movimentacao: false,
         produtoUso: false,
     });
     const [data, setData] = useState([]);
+    const [dataPtUso, setDataPtUso] = useState([])
     const [page, setPage] = useState(1);
+    const [typeModalProduto, setTypeModalProduto] = useState('cadastro');
+    const [idProdutoSelecionado, setIdProdutoSelecionado] = useState(0);
     const [limit] = useState(10);
 
-    // Função para abrir o modal de cadastro de produto
-    const openCadastroProduto = () => {
+    async function fetchData() {
+        const response = await apiService({
+            endPoint: pagProdutoUso? `products/uso?page=${page}&limit=${limit}` : `products?page=${page}&limit=${limit}`, 
+            method: 'get',
+        });
+        if(response){
+            if(pagProdutoUso){
+                console.log(response)
+                setDataPtUso(response)
+                return
+            }
+            setData(response.produtos);
+            return
+        }
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, [page,pagProdutoUso]);
+
+    const openCadastroProduto = (type, id) => {
+        setTypeModalProduto(type);
+        setIdProdutoSelecionado(id);
+        setActiveMenu(null)
         setOpenModal((prev) => ({ ...prev, cadastroProduto: true }));
     };
 
-    // Função para fechar o modal de cadastro de produto
     const closeCadastroProduto = () => {
         setOpenModal((prev) => ({ ...prev, cadastroProduto: false }));
     };
 
-    // Função para abrir o modal de movimentação
     const openMovimentacao = () => {
         setOpenModal((prev) => ({ ...prev, movimentacao: true }));
     };
 
-    // Função para fechar o modal de movimentação
     const closeMovimentacao = () => {
         setOpenModal((prev) => ({ ...prev, movimentacao: false }));
     };
 
-    // Função para abrir o modal de produto em uso
     const openProdutoEmUso = () => {
         setOpenModal((prev) => ({ ...prev, produtoUso: true }));
     };
 
-    // Função para fechar o modal de produto em uso
     const closeProdutoEmUso = () => {
         setOpenModal((prev) => ({ ...prev, produtoUso: false }));
     };
 
-    // Função para buscar os produtos via API
-    const fetchProdutos = async () => {
-        try {
-            const response = await fetch(`/products?page=${page}&limit=${limit}`);
-            const result = await response.json();
-            setData(result.data);
-        } catch (error) {
-            console.log('Erro ao buscar produtos:', error);
-        }
+    const toggleStatus = (id) => {
+        setData((prevData) =>
+            prevData.map((produto) =>
+                produto.id === id ? { ...produto, status: !produto.status } : produto
+            )
+        );
     };
 
-    useEffect(() => {
-        fetchProdutos();
-    }, [page, limit]); // Recarrega quando a página ou o limite mudar
+    const saidaProdutoUso = (id) => {
+        const api = apiService({
+            endPoint: `product/uso/saida?id=${id}`,
+            method: 'put'
+        })
+        console.log(api)
+    }
 
     return (
         <RootLayout>
-            <h1 className="font-bold text-blue text-5xl">Estoque</h1>
+            <h1 className="font-bold text-blue text-5xl">
+                {pagProdutoUso ? 'Produtos em Uso' : 'Estoque'}
+            </h1>
             <div className="w-full flex items-center justify-between">
                 <nav>
                     {pagProdutoUso ? (
@@ -75,28 +100,28 @@ export default function Page() {
                                 onClick={() => setPagProdutoUso(false)}
                                 className="py-2 px-4 shadow-xl rounded-3xl text-white bg-red"
                             >
-                                Voltar lista de produtos
+                                Voltar à Lista de Produtos
                             </button>
                             <button
                                 className="py-2 px-4 shadow-xl rounded-3xl text-white bg-blue"
                                 onClick={openProdutoEmUso}
                             >
-                                Adicionar produto em uso
+                                Adicionar Produto em Uso
                             </button>
                         </div>
                     ) : (
                         <div className="flex gap-2 items-center">
                             <button
-                                onClick={openCadastroProduto}
+                                onClick={() => openCadastroProduto('cadastro', 0)}
                                 className="py-2 px-4 shadow-xl rounded-3xl text-white bg-blue"
                             >
-                                Cadastro produto
+                                Cadastro Produto
                             </button>
                             <button
                                 onClick={() => setPagProdutoUso(true)}
                                 className="py-2 px-4 shadow-xl rounded-3xl text-white bg-gray-800"
                             >
-                                Produto em uso
+                                Produto em Uso
                             </button>
                             <button
                                 onClick={openMovimentacao}
@@ -114,59 +139,123 @@ export default function Page() {
                     ArrowRight={ArrowRight}
                 />
             </div>
-            {pagProdutoUso ? (
-                <table>
-                    <thead>
-                        <tr>
-                            <th className="px-4 py-2 text-start ">ID</th>
-                            <th className="px-4 py-2 text-start ">Produto</th>
-                            <th className="px-4 py-2 text-start ">Quantidade</th>
-                            <th className="px-4 py-2 text-start ">Marca</th>
-                            <th className="px-4 py-2 text-start ">Categoria</th>
-                            <th className="px-4 py-2 text-start ">Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((produto) => (
-                            <tr key={produto.id}>
-                                <td>{produto.id}</td>
-                                <td>{produto.nome}</td>
-                                <td>{produto.qt_estoque}</td>
-                                <td>{produto.nome_marca}</td>
-                                <td>{produto.nome_categoria}</td>
-                                <td>
-                                    <button
-                                        onClick={() => console.log('Editar produto')}
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        onClick={() => console.log('Excluir produto')}
-                                    >
-                                        Excluir
-                                    </button>
-                                </td>
+            <table className="w-full mt-4 border-collapse">
+                <thead>
+                    
+                        {pagProdutoUso ? (
+                            <tr>
+                                <th className="px-4 py-2 text-start">Produto</th>
+                                <th className="px-4 py-2 text-start">Quantidade</th>
+                                <th className="px-4 py-2 text-start">Data de uso</th>
+                                <th className="px-4 py-2 text-start">Data saída</th>
+
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            ) : (
-                <table>
-                    <thead>
-                        <tr>
-                            <th className="px-4 py-2 text-start ">ID</th>
-                            <th className="px-4 py-2 text-start ">Produto</th>
-                            <th className="px-4 py-2 text-start ">Quantidade</th>
-                            <th className="px-4 py-2 text-start ">Data</th>
-                            <th className="px-4 py-2 text-start ">Ação</th>
+                        ) : (
+                            <tr>
+                                <th className="px-4 py-2 text-start">Produto</th>
+                                <th className="px-4 py-2 text-start">Marca</th>
+                                <th className="px-4 py-2 text-start">Quantidade</th>
+                                <th className="px-4 py-2 text-start">Fornecedor</th>
+                                <th className="px-4 py-2 text-start">Status</th>
+                            </tr>
+                        )}
+                </thead>
+                <tbody>
+                {pagProdutoUso ? (
+                    dataPtUso.map((PtUso, index) => (
+                        <tr
+                        key={PtUso.id}
+                        className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+                        >
+                            <td className="px-4 py-2 text-start">{PtUso.produto.nome}</td>
+
+                            <td className="px-4 py-2 text-start">{PtUso.quantidade} Unidades</td>
+                            <td className="px-4 py-2 text-start">
+                                {new Date(PtUso.dt_inicio).getDate()}/
+                                {new Date(PtUso.dt_inicio).getMonth()}/
+                                {new Date(PtUso.dt_inicio).getFullYear()} - {new Date(PtUso.dt_inicio).getHours()}:{new Date(PtUso.dt_inicio).getMinutes()}
+                            </td>
+                            <td className="px-4 py-2 text-start">{PtUso.dt_fim == null ? '' : (
+                                `
+                                ${new Date(PtUso.dt_fim).getDate()}/
+                                ${new Date(PtUso.dt_fim).getMonth()}/
+                                ${new Date(PtUso.dt_fim).getFullYear()} - ${new Date(PtUso.dt_fim).getHours()}:${new Date(PtUso.dt_fim).getMinutes()}
+                                `
+                            )}</td>
+
+                            <td className="relative">
+                                {/* Botão para abrir/fechar o menu */}
+                                <div>
+                                    <button className="w-fit mr-10" onClick={() => setActiveMenu(activeMenu === PtUso.id ? null : PtUso.id)}>
+                                        <DotsThree />
+                                    </button>
+                                </div>
+                                
+                                {/* Menu de ações visível apenas se o menu ativo for o produto atual */}
+                                {activeMenu === PtUso.id && (
+                                    <div className="flex flex-col gap-2 items-start p-1 rounded-md bg-white shadow-xl border absolute -bottom-5 -left-10">
+                                        <button onClick={() => saidaProdutoUso(PtUso.id)}>
+                                            Saída
+                                        </button>
+                                    </div>
+                                )}
+                            </td>
                         </tr>
-                    </thead>
-                </table>
-            )}
+                    ))
+                ): (
+                    data.map((produto, index) => (
+                        <tr
+                            key={produto.id}
+                            className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+                        >
+                            <td className="px-4 py-2 text-start">{produto.nome}</td>
+                            <td className="px-4 py-2 text-start">{produto.marca}</td>
+                            <td className="px-4 py-2 text-start">{produto.quantidade} Unidades</td>
+                            <td className="px-4 py-2 text-start">{produto.fornecedor}</td>
+                            <td className="px-4 py-2 text-start">
+                                {produto.status ? (
+                                    <div className="w-4 h-4 rounded-full bg-green-500"></div>
+                                ) : (
+                                    <div className="w-4 h-4 rounded-full bg-red-500"></div>
+                                )}
+                            </td>
+                            <td className="px-4 py-2 text-start">{produto.nome_categoria}</td>
+                            <td className="relative">
+                                {/* Botão para abrir/fechar o menu */}
+                                <div>
+                                    <button className="w-fit mr-10" onClick={() => setActiveMenu(activeMenu === produto.id ? null : produto.id)}>
+                                        <DotsThree />
+                                    </button>
+                                </div>
+                                
+                                {/* Menu de ações visível apenas se o menu ativo for o produto atual */}
+                                {activeMenu === produto.id && (
+                                    <div className="flex flex-col gap-2 items-start p-1 rounded-md bg-white shadow-xl border absolute bottom-0 right-0">
+                                        <button onClick={() => openCadastroProduto('edit', produto.id)}>
+                                            Editar
+                                        </button>
+                                        <button onClick={() => toggleStatus(produto.id)}>
+                                            {produto.status ? 'Desativar' : 'Ativar'}
+                                        </button>
+                                    </div>
+                                )}
+                            </td>
+                        </tr>
+                    ))
+                )}
+
+                </tbody>
+            </table>
 
             {/* Modais */}
-            {openModal.cadastroProduto && (<CadastroProduto onClose={closeCadastroProduto}/>)}
-            {openModal.movimentacao && <Movimentacao onClose={closeMovimentacao}/>}
+            {openModal.cadastroProduto && (
+                <ProdutoModal
+                    onClose={closeCadastroProduto}
+                    type={typeModalProduto}
+                    id={idProdutoSelecionado}
+                />
+            )}
+            {openModal.movimentacao && <Movimentacao onClose={closeMovimentacao} />}
             {openModal.produtoUso && <ProdutoEmUso onClose={closeProdutoEmUso} />}
         </RootLayout>
     );

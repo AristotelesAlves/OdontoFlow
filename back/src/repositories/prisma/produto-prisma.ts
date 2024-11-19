@@ -35,6 +35,7 @@ export class ProdutoPrismaRepository implements ProductRepositoryInterface {
                 data_validade: data.data_validade,
                 unidade_medida: data.unidade_medida,
                 id_categoria: categoria.id,
+                fornecedor: data.fornecedor,
                 id_marca: marca.id,
                 id_usuario_cadastro: data.id_usuario_cadastro,
                 id_clinica: data.id_clinica,
@@ -55,19 +56,50 @@ export class ProdutoPrismaRepository implements ProductRepositoryInterface {
         return newProduct;
     }
 
-    async findAll(page: number, limit: number): Promise<{ produtos: productInterface[], total: number }> {
+    async findAll(page: number, limit: number) {
         const total = await prisma.produto.count();
+        
         const produtos = await prisma.produto.findMany({
             skip: (page - 1) * limit,
             take: limit,
+            include: {
+                marca: true,
+                estoques: true,
+            },
         });
 
-        return { produtos, total };
+
+        const formattedProdutos = produtos.map((produto) => {
+            const quantidadeTotal = produto.estoques.reduce(
+                (total, estoque) => total + estoque.estoque,
+                0
+            );
+
+            return {
+                id: produto.id,
+                nome: produto.nome,
+                descricao: produto.descricao,
+                marca: produto.marca?.nome || "Sem marca",
+                quantidade: quantidadeTotal,
+                fornecedor: produto.fornecedor || "Não informado", // Ajuste conforme o relacionamento
+                status: produto.status,
+            };
+        });
+
+        return {
+            produtos: formattedProdutos,
+            total
+        };
     }
 
     async findById(id: number): Promise<productInterface | null> {
         return await prisma.produto.findUnique({
             where: { id },
+            include: {
+                categoria: true,
+                estoques: true,
+                marca: true,
+            }
         });
     }
 
@@ -140,7 +172,6 @@ export class ProdutoPrismaRepository implements ProductRepositoryInterface {
     
         return updatedProduct;
     }
-    
 
     async delete(id: number): Promise<boolean> {
         const product = await prisma.produto.update({

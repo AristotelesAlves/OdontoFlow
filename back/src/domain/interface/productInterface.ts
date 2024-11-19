@@ -3,7 +3,8 @@ export interface productInterface {
     nome: string            
     descricao: string           
     data_validade: Date     
-    unidade_medida: string  
+    unidade_medida: string 
+    fornecedor: string 
     id_categoria?: number
     preco: number         
     id_marca?: number  

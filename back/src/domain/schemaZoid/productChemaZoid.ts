@@ -1,11 +1,13 @@
 import { z } from "zod";
 
 export const createdProductChema = z.object({
+    id: z.number().optional(),
     nome: z.string(),
     preco: z.number(),
     qt_compra: z.number(),
     descricao: z.string(),
-    data_validade: z.date(),
+    data_validade: z.date().or(z.string()),
+    fornecedor: z.string(),
     qt_estoque: z.number(),
     qt_minima: z.number(),
     unidade_medida: z.string().max(4),

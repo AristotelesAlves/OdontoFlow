@@ -1,21 +1,17 @@
 import { useState, useEffect } from "react";
 import LayoutModal from "../layout/LayoutModal";
 import InputWithLabel from "../common/Input";
+import apiService from "../../serive/apiService";
 
 export function ProdutoEmUso({ onClose }) {
+    const [showDropdown, setShowDropdown] = useState(false); // Controla a visibilidade da lista
     const [produtoUso, setProdutoUso] = useState(""); // Armazenar o produto selecionado
     const [quantidade, setQuantidade] = useState(0);
     const [produtos, setProdutos] = useState([]); // Lista de produtos simulada
     const [searchTerm, setSearchTerm] = useState(""); // Termo de busca
 
     // Lista de produtos simulada para testar a funcionalidade
-    const produtosMockados = [
-        { id: "1", nome: "Produto A" },
-        { id: "2", nome: "Produto B" },
-        { id: "3", nome: "Produto C" },
-        { id: "4", nome: "Produto D" },
-        { id: "5", nome: "Produto E" },
-    ];
+    const [produtosMockados, setProdutosMockados] = useState([])
 
     // Função de pesquisa simulada
     const fetchProdutos = () => {
@@ -33,6 +29,14 @@ export function ProdutoEmUso({ onClose }) {
 
     // Efeito para buscar produtos sempre que o searchTerm mudar
     useEffect(() => {
+        async function listPt(){
+            const service = await apiService({
+                endPoint: 'product/buscar',
+                method: 'get'
+            })
+            setProdutosMockados(service)
+        }
+        listPt()
         fetchProdutos();
     }, [searchTerm]);
 
@@ -46,17 +50,17 @@ export function ProdutoEmUso({ onClose }) {
 
         // Simulação do envio para o backend
         try {
-            console.log("Enviando produto em uso:", produtoEmUso);
-            // Aqui seria o código real de envio, por exemplo:
-            // await fetch("/product/use", {
-            //     method: "POST",
-            //     headers: {
-            //         "Content-Type": "application/json",
-            //     },
-            //     body: JSON.stringify(produtoEmUso),
-            // });
-
-            // Fechar o modal após envio bem-sucedido
+            const service = await apiService({
+                endPoint: 'product/uso',
+                body:{
+                    id_produto: produtoUso,
+                    quantidade: quantidade,
+                },
+                method:'post'
+            })
+            if(service){
+                console.log('Deu certo!')
+            }
             onClose();
         } catch (error) {
             console.error("Erro ao registrar produto em uso", error);
@@ -70,22 +74,31 @@ export function ProdutoEmUso({ onClose }) {
 
                 {/* Campo de pesquisa */}
                 <div className="relative">
-                    <InputWithLabel
-                        placeholder="Pesquisar produto"
-                        label="Produto"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)} 
-                    />
+                <InputWithLabel
+                    placeholder="Pesquisar produto"
+                    label="Produto"
+                    value={searchTerm}
+                    onChange={(e) => {
+                        setSearchTerm(e.target.value); 
+                        setShowDropdown(e.target.value.length >= 2); // Exibe a lista apenas com 2 ou mais caracteres
+                    }}
+                />
+
 
                     {/* Caixa de produtos filtrados com posição relativa */}
-                    {searchTerm.length >= 2 && (
+                    {searchTerm.length >= 2 && showDropdown && (
                         <div className="absolute top-full left-0 w-full max-h-40 overflow-auto mt-2 border border-gray-300 rounded-md bg-white z-10">
                             {produtos.length > 0 ? (
                                 produtos.map((produto) => (
                                     <div
                                         key={produto.id}
                                         className="cursor-pointer p-2 hover:bg-gray-100 rounded-md"
-                                        onClick={() => setProdutoUso(produto.id)} // Seleciona o produto ao clicar
+                                        onClick={() => {
+                                            console.log(produto)
+                                            setProdutoUso(produto.id);
+                                            setSearchTerm(produto.nome)
+                                            setShowDropdown(false);   // Oculta a lista
+                                        }}
                                     >
                                         {produto.nome}
                                     </div>
@@ -97,6 +110,7 @@ export function ProdutoEmUso({ onClose }) {
                             )}
                         </div>
                     )}
+
                 </div>
 
                 {/* Campo de quantidade */}

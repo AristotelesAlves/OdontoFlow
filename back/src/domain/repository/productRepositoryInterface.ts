@@ -1,5 +1,15 @@
 import { productInterface } from "../interface/productInterface";
 
+interface IFindAll {
+    id: number,
+    nome: string,
+    descricao: string,
+    marca: string,
+    quantidade: number,
+    fornecedor: string, // Ajuste conforme o relacionamento
+    status: boolean,
+}
+
 export interface ProductRepositoryInterface {
     save(data: Omit<productInterface, 'id' | 'dt_deletado' | 'dt_criacao' | 'dt_atualizado' | 'status' | 'id_usuario_atualizacao' | 'id_marca' | 'id_categoria'> & {
         nome_categoria: string;
@@ -9,7 +19,7 @@ export interface ProductRepositoryInterface {
         qt_minima: number;
     }): Promise<productInterface | null>;
 
-    findAll(page: number, limit: number): Promise<{ produtos: productInterface[], total: number }>;
+    findAll(page: number, limit: number): Promise<{ produtos: IFindAll[], total: number }>;
 
     findById(id: number): Promise<productInterface | null>;
 
