@@ -52,6 +52,7 @@ export default function Page(){
         });
 
         setData(response)
+        console.log(response)
         const formattedData = response.map(item => ({
             id: item.id,
             nome: item.produto.nome,

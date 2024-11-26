@@ -10,7 +10,7 @@ import { get } from "../../util/userDateStoredLocally";
 
 export default function Page() {
     const [data, setData] = useState([]);
-    const [activeMenu, setActiveMenu] = useState(null); 
+    const [user, setUser] = useState(null); 
     const [modal, setModal] = useState(false);
     const [modalType, setModalType] = useState('create');  // Estado para determinar se é criar ou editar
     const [selectedUser, setSelectedUser] = useState({
@@ -31,7 +31,15 @@ export default function Page() {
         }
     }
 
+    async function getUser(){
+        const user = await get()
+        if(user){
+            setUser(user)
+        }
+    }
+
     useEffect(() => {
+        getUser()
         getUsers();
     }, [ponteiro, modal]);
 
@@ -59,14 +67,14 @@ export default function Page() {
         setPonteiro(!ponteiro)
         console.group(service)
     }
-    const user = get();
-    if (!user || user.adm === false) {
+
+    if(user.adm == false){
         return (
             <div className="flex flex-col w-full justify-center items-center gap-1 h-screen">
                 <h1 className="font-bold text-4xl text-blue">Você não tem autorização</h1>
                 <a className="p-2 rounded-lg text-white bg-black" href="/">Voltar ao inicio</a>
             </div>
-        );
+        )
     }else {
         return (
             <RootLayout>
