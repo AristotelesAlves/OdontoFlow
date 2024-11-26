@@ -3,12 +3,12 @@
 import { ArrowLeft, ArrowRight, ArrowsClockwise, ArrowsLeftRight, FirstAid } from "@phosphor-icons/react/dist/ssr";
 import RootLayout from "../../components/layout/RootLayout";
 import Table from "../../components/Table";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import apiService from "../../serive/apiService";
 import { DotsThree } from "@phosphor-icons/react";
 
 
-export default function page(){
+export default function Page(){
 
     const [data, setData] = useState([]); // Inicializando como um array vazio
     const [page, setPage] = useState(1); // Estado para a página atual
@@ -19,32 +19,30 @@ export default function page(){
     })
 
     // Função para buscar os dados com base na página e limite
-    async function fetchData() {
+    const fetchData = useCallback(async () => {
         const response = await apiService({
-            endPoint: `move?page=${page}&limit=${limit}`, 
+            endPoint: `move?page=${page}&limit=${limit}`,
             method: 'GET',
         });
-
+    
         if (response.error) {
             console.error('Erro:', response.message); 
             setData([]); 
         } else {
             setData(response.movimentacoes || []);
         }
-
+    
         const homest = await apiService({
             endPoint: `home`, 
             method: 'GET',
         });
-
-        setHome(homest)
-    }
-
-
-
+    
+        setHome(homest);
+    }, [page, limit]); // Adicione `page` e `limit` como dependências
+    
     useEffect(() => {
         fetchData();
-    }, [page]);
+    }, [fetchData]);
 
 
     return (

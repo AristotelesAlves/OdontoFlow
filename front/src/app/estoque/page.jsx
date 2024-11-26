@@ -1,6 +1,6 @@
 "use client";
 import RootLayout from "../../components/layout/RootLayout";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import PagNavigation from "../../components/common/PagNavigation";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 import ProdutoModal from "../../components/modal/CadastroProduto";
@@ -24,25 +24,26 @@ export default function Page() {
     const [idProdutoSelecionado, setIdProdutoSelecionado] = useState(0);
     const [limit] = useState(10);
 
-    async function fetchData() {
+    const fetchData = useCallback(async () => {
         const response = await apiService({
-            endPoint: pagProdutoUso? `products/uso?page=${page}&limit=${limit}` : `products?page=${page}&limit=${limit}`, 
+            endPoint: pagProdutoUso
+                ? `products/uso?page=${page}&limit=${limit}`
+                : `products?page=${page}&limit=${limit}`, 
             method: 'get',
         });
-        if(response){
-            if(pagProdutoUso){
-                console.log(response)
-                setDataPtUso(response)
-                return
+
+        if (response) {
+            if (pagProdutoUso) {
+                setDataPtUso(response);
+                return;
             }
             setData(response.produtos);
-            return
         }
-    }
+    }, [pagProdutoUso, page, limit]);
 
     useEffect(() => {
         fetchData();
-    }, [page,pagProdutoUso, openModal,activeMenu]);
+    }, [fetchData]);
 
     const openCadastroProduto = (type, id) => {
         setTypeModalProduto(type);

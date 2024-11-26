@@ -134,7 +134,7 @@ export default function Header(){
                                         }
                                         {notification.map((nt, index) => {
                                             return (
-                                                <li className="border-y flex items-center pr-2">
+                                                <li key={nt.id} className="border-y flex items-center pr-2">
                                                     <div>
                                                         <p className="font-semibold">
                                                             Estoque

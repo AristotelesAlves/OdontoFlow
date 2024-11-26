@@ -7,15 +7,12 @@ import { useRouter } from "next/navigation";
 import apiService from '../../serive/apiService';
 
 export default function Page() {
-
-     useEffect(() => {
-         const user = get();
-         if (user && user.token) {
-             router.push('/dashboard'); 
-         } else {
-            
-         }
-     }, []);
+    useEffect(() => {
+        const user = get();
+        if (user && user.token) {
+            router.push('/dashboard');
+        }
+    }, []);
 
     const router = useRouter();
     const [popUpNotification, setPopUpNotification] = useState({

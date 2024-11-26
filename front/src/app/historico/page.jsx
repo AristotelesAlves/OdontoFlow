@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 import RootLayout from "../../components/layout/RootLayout";
 import PagNavigation from "../../components/common/PagNavigation";
@@ -12,23 +12,29 @@ export default function Page() {
     const [limit] = useState(10); // Estado para a quantidade de registros por página
 
     // Função para buscar os dados com base na página e limite
-    async function fetchData() {
-        const response = await apiService({
-            endPoint: `move?page=${page}&limit=${limit}`, 
-            method: 'GET',
-        });
+    const fetchData = useCallback(async () => {
+        try {
+            const response = await apiService({
+                endPoint: `move?page=${page}&limit=${limit}`, 
+                method: 'GET',
+            });
 
-        if (response.error) {
-            console.error('Erro:', response.message); 
-            setData([]); 
-        } else {
-            setData(response.movimentacoes || []);
+            if (response.error) {
+                console.error('Erro:', response.message);
+                setData([]);
+            } else {
+                setData(response.movimentacoes || []);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados:', error);
+            setData([]);
         }
-    }
+    }, [page, limit]);
 
+    // useEffect para chamar fetchData quando a página muda
     useEffect(() => {
         fetchData();
-    }, [page]);
+    }, [fetchData]);
 
     console.log(data); 
 

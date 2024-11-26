@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import apiService from "../../serive/apiService";
 
 
-export default function page(){
+export default function Page(){
 
     // const data = [
     //     { PRODUTO: 'Seda Dental', Fornecedor: 'Aristoteles', QTD_DO_PRODUTOS: 150, valor: 20.23, CATEGORIA_DO_PRODUTO: 'Higiene Bucal' },
