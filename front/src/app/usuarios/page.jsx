@@ -59,14 +59,14 @@ export default function Page() {
         setPonteiro(!ponteiro)
         console.group(service)
     }
-
-    if(get().adm == false){
+    const user = get();
+    if (!user || user.adm === false) {
         return (
             <div className="flex flex-col w-full justify-center items-center gap-1 h-screen">
                 <h1 className="font-bold text-4xl text-blue">Você não tem autorização</h1>
                 <a className="p-2 rounded-lg text-white bg-black" href="/">Voltar ao inicio</a>
             </div>
-        )
+        );
     }else {
         return (
             <RootLayout>
