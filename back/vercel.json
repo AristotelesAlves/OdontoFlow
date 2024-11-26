@@ -1,0 +1,13 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "./dist/server.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "env": {
+      "DATABASE_URL": "postgresql://odontoflow_owner:LtQ2I9BshwJZ@ep-lively-sun-a53m84cr.us-east-2.aws.neon.tech/odontoflow?sslmode=require"
+    }
+  }
+  
