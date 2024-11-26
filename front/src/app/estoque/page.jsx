@@ -1,13 +1,13 @@
 "use client";
 import RootLayout from "../../components/layout/RootLayout";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import PagNavigation from "../../components/common/PagNavigation";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
 import ProdutoModal from "../../components/modal/CadastroProduto";
 import { Movimentacao } from "../../components/modal/Movimentacao";
 import { ProdutoEmUso } from "../../components/modal/ProdutoUso";
 import apiService from "../../serive/apiService";
-import { Check, DotsThree } from "@phosphor-icons/react/dist/ssr";
+import { Check } from "@phosphor-icons/react/dist/ssr";
 
 export default function Page() {
     const [pagProdutoUso, setPagProdutoUso] = useState(false);
@@ -24,26 +24,25 @@ export default function Page() {
     const [idProdutoSelecionado, setIdProdutoSelecionado] = useState(0);
     const [limit] = useState(10);
 
-    const fetchData = useCallback(async () => {
+    async function fetchData() {
         const response = await apiService({
-            endPoint: pagProdutoUso
-                ? `products/uso?page=${page}&limit=${limit}`
-                : `products?page=${page}&limit=${limit}`, 
+            endPoint: pagProdutoUso? `products/uso?page=${page}&limit=${limit}` : `products?page=${page}&limit=${limit}`, 
             method: 'get',
         });
-
-        if (response) {
-            if (pagProdutoUso) {
-                setDataPtUso(response);
-                return;
+        if(response){
+            if(pagProdutoUso){
+                console.log(response)
+                setDataPtUso(response)
+                return
             }
             setData(response.produtos);
+            return
         }
-    }, [pagProdutoUso, page, limit]);
+    }
 
     useEffect(() => {
         fetchData();
-    }, [fetchData]);
+    }, [page,pagProdutoUso, openModal,activeMenu]);
 
     const openCadastroProduto = (type, id) => {
         setTypeModalProduto(type);
