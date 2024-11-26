@@ -1,8 +1,6 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
-import { ProdutoInMemory } from "../../repositories/in-memory/memory-produto";
 import { ProductController } from "../controller/productController";
-import authMiddleware from "../middleware/auth-middleware";
 import { app } from "../../app";
 import { ProdutoPrismaRepository } from "../../repositories/prisma/produto-prisma";
 
@@ -19,7 +17,7 @@ export async function productRouter() {
     app.get('/products/uso', (req: FastifyRequest, reply: FastifyReply) => controller.produtoUsoList(req, reply));
     app.put('/product/uso/saida', (req: FastifyRequest, reply: FastifyReply) => controller.removerProdutoUso(req, reply));
     app.get('/home', (req: FastifyRequest, reply: FastifyReply) => controller.home(req, reply));
-    
+
 
 }
 

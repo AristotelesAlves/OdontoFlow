@@ -7,7 +7,9 @@
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "test": "vitest"
+    "test": "vitest",
+    "build": "tsc",      
+  "start": "node dist/server.js"
   },
   "author": "equipe_unifap",
   "license": "ISC",
