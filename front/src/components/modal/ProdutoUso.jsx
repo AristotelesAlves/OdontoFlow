@@ -69,7 +69,7 @@ export function ProdutoEmUso({ onClose }) {
 
     return (
         <LayoutModal>
-            <form onSubmit={handleSubmit} className="flex gap-2 flex-col min-w-96">
+            <form onSubmit={handleSubmit} className="flex gap-2 flex-col min-w-96 h-fit">
                 <h1 className="font-semibold py-1">Produto em Uso</h1>
 
                 {/* Campo de pesquisa */}

@@ -1,4 +1,4 @@
-export function save({ id, name, email, clinica_id, token }) {
+export function save({ id, name, email, clinica_id, token,adm }) {
     if (typeof window !== 'undefined') {
         const userDate = {
             id,
@@ -6,6 +6,7 @@ export function save({ id, name, email, clinica_id, token }) {
             email,
             clinica_id,
             token,
+            adm
         };
         localStorage.setItem('userDate', JSON.stringify(userDate));
     }

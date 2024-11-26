@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import LayoutModal from "../layout/LayoutModal";
 import InputWithLabel from "../common/Input";
 import {Trash} from "@phosphor-icons/react/dist/ssr";
+import apiService from "../../serive/apiService";
+import { get } from "../../util/userDateStoredLocally";
 
 
 export function Movimentacao({ onClose }) {
@@ -12,13 +14,10 @@ export function Movimentacao({ onClose }) {
     const [produtos, setProdutos] = useState([]); // Lista de produtos filtrados
 
     // Produtos simulados para pesquisa
-    const produtosMockados = [
-        { id: "1", nome: "Produto A" },
-        { id: "2", nome: "Produto B" },
-        { id: "3", nome: "Produto C" },
-        { id: "4", nome: "Produto D" },
-        { id: "5", nome: "Produto E" },
-    ];
+    const [produtosMockados, setProdutosMockados] = useState([])
+
+
+    console.log(produtoMovimentacao)
 
     // Função de pesquisa para filtrar os produtos
     const fetchProdutos = () => {
@@ -34,6 +33,14 @@ export function Movimentacao({ onClose }) {
 
 
     useEffect(() => {
+        async function listPt(){
+            const service = await apiService({
+                endPoint: 'product/buscar',
+                method: 'get'
+            })
+            setProdutosMockados(service)
+        }
+        listPt();
         fetchProdutos();
     }, [searchTerm]);
 
@@ -41,10 +48,12 @@ export function Movimentacao({ onClose }) {
     const adicionarProduto = (produto) => {
         setProdutoMovimentacao((prevProdutos) => [
             ...prevProdutos,
-            { ...produto, quantidade: 1 }, 
+            { ...produto, id: Number(produto.id), quantidade: 1 }, // Converte id para número
         ]);
         setSearchTerm("");
     };
+    
+
 
 
     const atualizarQuantidade = (id, quantidade) => {
@@ -54,6 +63,15 @@ export function Movimentacao({ onClose }) {
             )
         );
     };
+
+    const atualizarValor = (id, valor) => {
+        setProdutoMovimentacao((prevProdutos) =>
+            prevProdutos.map((produto) =>
+                produto.id === id ? { ...produto, valor } : produto
+            )
+        );
+    };
+
 
 
     const removerProduto = (produtoId) => {
@@ -65,34 +83,43 @@ export function Movimentacao({ onClose }) {
    
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
+        // Verificar se produtoMovimentacao contém itens
+        if (produtoMovimentacao.length === 0) {
+            console.error("Erro: Nenhum produto foi adicionado.");
+            return;
+        }
+    
+        // Mapear os produtos e remover atributos desnecessários
+        const produtosSemNome = produtoMovimentacao.map(({ nome, ...resto }) => resto);
+        console.log({test:produtosSemNome})
+    
         const movimentacao = {
-            destino,
-            tipo,
-            id_clinica: 123, // ID da clínica
-            id_usuario: 456, // ID do usuário
-            produto_movimentacao,
+            destino: destino,
+            tipo: tipo,
+            id_clinica: 1,
+            id_usuario: get().id,
+            produto_movimentacao: produtosSemNome, // Certifique-se de que é um array
         };
-
+    
         try {
-            await fetch("/move", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(movimentacao),
+            const service = await apiService({
+                endPoint: 'move',
+                body: movimentacao,
+                method: 'post'
             });
-
-            // Fechar modal após envio
+            console.log(service);
             onClose();
         } catch (error) {
             console.error("Erro ao registrar movimentação", error);
         }
     };
+    
+    
 
     return (
         <LayoutModal>
-            <form onSubmit={handleSubmit} className="flex gap-2 flex-col min-w-96">
+            <form className="flex gap-2 flex-col min-w-96">
                 <h1 className="font-semibold py-1">Cadastro de Movimentação</h1>
 
                 {/* Campo de Destino */}
@@ -173,6 +200,26 @@ export function Movimentacao({ onClose }) {
                                                 className="w-16 p-1 border rounded-md text-center"
                                             />
                                         </div>
+                                        {
+                                            tipo == "entrada" ? (
+                                                <div className="flex items-center mt-1">
+                                                    <label htmlFor={`quantidade-${produto.id}`} className="mr-2">
+                                                        Preço:
+                                                    </label>
+                                                    <input
+                                                            id={`preco-${produto.id}`}
+                                                            type="number"
+                                                            step="0.01"
+                                                            value={produto.preco}
+                                                            min="0"
+                                                            onChange={(e) =>
+                                                            atualizarValor(produto.id, Number(e.target.value))
+                                                        }
+                                                        className="w-16 p-1 border rounded-md text-center"
+                                                    />
+                                                </div>
+                                            ) : null
+                                        }
                                     </div>
                                     <button
                                         type="button"
@@ -196,7 +243,7 @@ export function Movimentacao({ onClose }) {
                         Cancelar
                     </button>
                     <button
-                        type="submit"
+                        onClick={handleSubmit}
                         className="py-1 bg-blue text-white rounded-md w-full"
                     >
                         Confirmar

@@ -56,6 +56,7 @@ export class UserService{
     }
 
     async register(userData: Omit<userInterface, 'id'>): Promise<{statusCode:number, message?: string, data?: userInterface}>{
+
         const userByEmail = await this.userRepository.findByEmail(userData.email)
         const userByCpf = await this.userRepository.findByCpf(userData.cpf)
 

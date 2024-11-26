@@ -33,6 +33,7 @@ model Usuario {
   cpf           String         @unique
   email         String         @unique
   status        Boolean
+  adm           Boolean
   dt_criacao    DateTime       @default(now())
   dt_deletado   DateTime?
   dt_atualizado DateTime       @updatedAt
@@ -156,6 +157,7 @@ model MovimentacaoProduto {
   id              Int          @id @default(autoincrement())
   id_movimentacao Int
   id_produto      Int
+  valor           Float?
   quantidade      Int
   estorno         Boolean
   movimentacao    Movimentacao @relation(fields: [id_movimentacao], references: [id])

@@ -29,6 +29,7 @@ export class userPrismaMemory implements UserRepositoryInterface {
     }
 
     async save(userData: Omit<userInterface, 'id'>) {
+        
         const user = await prisma.usuario.create({
             data: userData
         });

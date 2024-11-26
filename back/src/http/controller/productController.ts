@@ -254,6 +254,37 @@ export class ProductController {
         }
     }
 
+    async home(req: FastifyRequest, reply: FastifyReply) {
+        const hoje = new Date();
+        const inicioDoDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+        const fimDoDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 1);
+    
+        const entradas = await prisma.movimentacao.count({
+            where: {
+                tipo: { in: ['entrada', 'saida'] }, // Verifica se o tipo é 'entrada' ou 'saida'
+                dt_movimentacao: {
+                    gte: inicioDoDia, // Data maior ou igual ao início do dia
+                    lt: fimDoDia, // Data menor que o início do próximo dia
+                },
+            },
+        });
 
+        const produtosUso = await prisma.produtoUso.findMany({
+            where:{
+                dt_fim: null
+            }
+        })
+
+        let quantidadeProdutoUso = 0
+
+        produtosUso.map((item) => {
+            quantidadeProdutoUso += item.quantidade
+        })
+    
+        reply.send({
+            entradas: entradas,
+            produto_uso: quantidadeProdutoUso
+        });
+    }
 
 }

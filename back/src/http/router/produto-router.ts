@@ -18,7 +18,8 @@ export async function productRouter() {
     app.get('/product/buscar', (req: FastifyRequest, reply: FastifyReply) => controller.buscar(req, reply));
     app.get('/products/uso', (req: FastifyRequest, reply: FastifyReply) => controller.produtoUsoList(req, reply));
     app.put('/product/uso/saida', (req: FastifyRequest, reply: FastifyReply) => controller.removerProdutoUso(req, reply));
-
+    app.get('/home', (req: FastifyRequest, reply: FastifyReply) => controller.home(req, reply));
+    
 
 }
 

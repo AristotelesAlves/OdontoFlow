@@ -39,6 +39,7 @@ export default function ProdutoModal({ onClose, type, id }) {
                         id_usuario_atualizacao: 1,
                         id_categoria: data.id_categoria,
                         id_marca: data.id_marca,
+                        status: data.status,
                         id_estoque: data.estoques[0].id
 
                     }));
@@ -51,7 +52,7 @@ export default function ProdutoModal({ onClose, type, id }) {
         }
     }, [type]);
 
-    const dateStored = get();
+
 
     const [formData, setFormData] = useState({
         nome: "",
@@ -68,6 +69,7 @@ export default function ProdutoModal({ onClose, type, id }) {
         unidade_medida: "un",
         nome_categoria: "",
         nome_marca: "",
+        status: false,
         id_usuario_atualizacao: 1,
         id_usuario_cadastro:1,
         id_clinica: 1,
@@ -172,7 +174,16 @@ export default function ProdutoModal({ onClose, type, id }) {
                         value={formData.data_validade}
                         onChange={(e) => setFormData({...formData, data_validade: e.target.value})}
                     />
+                    <div className="flex gap-2 items-center py-2">
+                        <h3>
+                            Status:
+                        </h3>
+                        <div onClick={() => setFormData({...formData, status: !formData.status})} className={`w-14 rounded-lg border cursor-pointer border-black p-1 flex ${formData.status ? "justify-end" : "justify-start" }`}>
+                            <div className={`w-5 h-5 ${formData.status ? 'bg-green-300': 'bg-red'} rounded-md`}></div>
+                        </div>
+                    </div>
                 </div>
+                
                 <div className="flex gap-1 items-center">
                     <button
                         onClick={onClose}

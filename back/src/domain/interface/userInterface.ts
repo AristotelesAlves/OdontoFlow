@@ -8,4 +8,5 @@ export interface userInterface {
     id_clinica: number;
     dt_atualizado: Date;
     dt_deletado: Date | null;
+    adm: boolean
   }

@@ -45,7 +45,8 @@ export default function Page() {
             if (response.message) {
                 const message = {
                     'User not fund': 'Usuário não encontrado',
-                    'Invalid password': 'Credenciais incorreta'
+                    'Invalid password': 'Credenciais incorreta',
+                    'User inactived': 'Usuário desativado'
                 }
                 setPopUpNotification({
                     ...popUpNotification,
@@ -62,7 +63,8 @@ export default function Page() {
                 email: response.user.email,
                 id: response.user.id,
                 name: response.user.nome_usuario,
-                token: response.token
+                token: response.token,
+                adm: response.user.adm
             })
 
             router.push('/dashboard')

@@ -7,7 +7,7 @@ import ProdutoModal from "../../components/modal/CadastroProduto";
 import { Movimentacao } from "../../components/modal/Movimentacao";
 import { ProdutoEmUso } from "../../components/modal/ProdutoUso";
 import apiService from "../../serive/apiService";
-import { DotsThree } from "@phosphor-icons/react/dist/ssr";
+import { Check, DotsThree } from "@phosphor-icons/react/dist/ssr";
 
 export default function Page() {
     const [pagProdutoUso, setPagProdutoUso] = useState(false);
@@ -42,7 +42,7 @@ export default function Page() {
 
     useEffect(() => {
         fetchData();
-    }, [page,pagProdutoUso]);
+    }, [page,pagProdutoUso, openModal,activeMenu]);
 
     const openCadastroProduto = (type, id) => {
         setTypeModalProduto(type);
@@ -84,6 +84,7 @@ export default function Page() {
             endPoint: `product/uso/saida?id=${id}`,
             method: 'put'
         })
+        setActiveMenu(false)
         console.log(api)
     }
 
@@ -183,22 +184,14 @@ export default function Page() {
                                 `
                             )}</td>
 
-                            <td className="relative">
-                                {/* Botão para abrir/fechar o menu */}
-                                <div>
-                                    <button className="w-fit mr-10" onClick={() => setActiveMenu(activeMenu === PtUso.id ? null : PtUso.id)}>
-                                        <DotsThree />
-                                    </button>
-                                </div>
-                                
-                                {/* Menu de ações visível apenas se o menu ativo for o produto atual */}
-                                {activeMenu === PtUso.id && (
-                                    <div className="flex flex-col gap-2 items-start p-1 rounded-md bg-white shadow-xl border absolute -bottom-5 -left-10">
+                            <td className="px-4 py-2 relative">
+                                {
+                                    PtUso.dt_fim != null ? '' : (
                                         <button onClick={() => saidaProdutoUso(PtUso.id)}>
-                                            Saída
+                                            <Check/>
                                         </button>
-                                    </div>
-                                )}
+                                    )
+                                }
                             </td>
                         </tr>
                     ))
@@ -212,33 +205,19 @@ export default function Page() {
                             <td className="px-4 py-2 text-start">{produto.marca}</td>
                             <td className="px-4 py-2 text-start">{produto.quantidade} Unidades</td>
                             <td className="px-4 py-2 text-start">{produto.fornecedor}</td>
-                            <td className="px-4 py-2 text-start">
-                                {produto.status ? (
-                                    <div className="w-4 h-4 rounded-full bg-green-500"></div>
-                                ) : (
-                                    <div className="w-4 h-4 rounded-full bg-red-500"></div>
-                                )}
+                            <td className="px-4 py-2 text-start flex gap-2 items-center">
+                                <div className={`w-4 h-4 rounded-full ${produto.status ? 'bg-green-500': 'bg-red'} `}>
+                                </div>
+                                <span className={`${produto.status ? 'text-green-500': 'text-red'} `}>
+                                    {produto.status ? 'Ativo': 'Desativado'}
+                                </span>
                             </td>
                             <td className="px-4 py-2 text-start">{produto.nome_categoria}</td>
                             <td className="relative">
                                 {/* Botão para abrir/fechar o menu */}
-                                <div>
-                                    <button className="w-fit mr-10" onClick={() => setActiveMenu(activeMenu === produto.id ? null : produto.id)}>
-                                        <DotsThree />
-                                    </button>
-                                </div>
-                                
-                                {/* Menu de ações visível apenas se o menu ativo for o produto atual */}
-                                {activeMenu === produto.id && (
-                                    <div className="flex flex-col gap-2 items-start p-1 rounded-md bg-white shadow-xl border absolute bottom-0 right-0">
-                                        <button onClick={() => openCadastroProduto('edit', produto.id)}>
-                                            Editar
-                                        </button>
-                                        <button onClick={() => toggleStatus(produto.id)}>
-                                            {produto.status ? 'Desativar' : 'Ativar'}
-                                        </button>
-                                    </div>
-                                )}
+                                <button onClick={() => openCadastroProduto('edit', produto.id)}>
+                                    Editar
+                                </button>
                             </td>
                         </tr>
                     ))

@@ -48,10 +48,10 @@ export default function PdfListBuy({ data = [], closeModal }){
                             {data.map((item, index) => (
                                 <tr key={index} className="border-b">
                                     {/* <td className="p-2"><Square size={30}/></td> */}
-                                    <td className="p-2">{item.PRODUTO}</td>
-                                    <td className="p-2">{item.Fornecedor}</td>
-                                    <td className="p-2">{item.QTD_DO_PRODUTOS} unidades</td>
-                                    <td className="p-2">{item.CATEGORIA_DO_PRODUTO}</td>
+                                    <td className="p-2">{item.nome}</td>
+                                    <td className="p-2">{item.fornecedor}</td>
+                                    <td className="p-2">{item.estoque} unidades</td>
+                                    <td className="p-2">{item.marca}</td>
                                 </tr>
                             ))}
                         </tbody>

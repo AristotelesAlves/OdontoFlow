@@ -22,4 +22,11 @@ export async function moveRouter(app: FastifyInstance) {
     app.put('/move/:id/estorno', async (req, reply) => {
         await controller.estornar(req, reply);  // Chama o método estornar do controlador
     });
+
+    app.get('/notification', (req, reply) => controller.notificationList(req, reply));
+
+    app.put('/notification', (req, reply) => controller.readNotification(req, reply));
+
+    app.get('/lista-compra', (req, reply) => controller.listCompra(req, reply));
+
 }
