@@ -56,7 +56,7 @@ export default function Page() {
 
 
             save({
-                clinica_id: response.user.id_clinica,
+                clinica_id: 1,
                 email: response.user.email,
                 id: response.user.id,
                 name: response.user.nome_usuario,
