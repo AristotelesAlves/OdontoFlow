@@ -4,8 +4,7 @@ import InputWithLabel from '../../components/common/Input';
 import Alert from '../../components/modal/Alert';
 import { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
-import apiService from '../../service/apiService';
-
+import apiService from '../../serive/apiService';
 export default function Page() {
     const router = useRouter();
 
