@@ -1,20 +1,14 @@
 "use client";
-import {save,get} from '../../util/userDateStoredLocally'
+import { save, get } from '../../util/userDateStoredLocally';
 import InputWithLabel from '../../components/common/Input';
 import Alert from '../../components/modal/Alert';
 import { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
-import apiService from '../../serive/apiService';
+import apiService from '../../service/apiService';
 
 export default function Page() {
-    useEffect(() => {
-        const user = get();
-        if (user && user.token) {
-            router.push('/dashboard');
-        }
-    }, []);
-
     const router = useRouter();
+
     const [popUpNotification, setPopUpNotification] = useState({
         status: false,
         message: ''
@@ -25,84 +19,108 @@ export default function Page() {
         senha: ''
     });
 
+    useEffect(() => {
+        const loggedUser = get();
+        if (loggedUser && loggedUser.token) {
+            router.push('/dashboard');
+        }
+    }, []);
+
     async function handleSubmit(event) {
         event.preventDefault();
 
         setPopUpNotification({
-            status:false
-        })
+            status: false
+        });
 
         try {
             const response = await apiService({
-                endPoint:'login',
+                endPoint: 'login',
                 body: user,
                 method: 'POST'
-            })
-    
+            });
+
+            console.log('Response:', response);
+
             if (response.message) {
                 const message = {
                     'User not fund': 'Usuário não encontrado',
-                    'Invalid password': 'Credenciais incorreta',
+                    'Invalid password': 'Credenciais incorretas',
                     'User inactived': 'Usuário desativado'
-                }
+                };
+
                 setPopUpNotification({
                     ...popUpNotification,
-                    message: message[response.message] || 'Credenciais incorreta',
+                    message: message[response.message] || 'Credenciais incorretas',
                     status: true
                 });
                 return;
-            } 
+            }
 
-
+            if (!response.user || typeof response.user.id_clinica === 'undefined') {
+                setPopUpNotification({
+                    ...popUpNotification,
+                    message: 'Erro inesperado: dados da clínica não encontrados.',
+                    status: true
+                });
+                return;
+            }
 
             save({
-                clinica_id: 1,
+                clinica_id: response.user.id_clinica,
                 email: response.user.email,
                 id: response.user.id,
                 name: response.user.nome_usuario,
                 token: response.token,
                 adm: response.user.adm
-            })
+            });
 
-            router.push('/dashboard')
-            
+            router.push('/dashboard');
         } catch (error) {
-            console.error(error)
+            console.error('Erro no handleSubmit:', error);
+            setPopUpNotification({
+                ...popUpNotification,
+                message: 'Erro no servidor. Tente novamente mais tarde.',
+                status: true
+            });
         }
-        
     }
 
     return (
         <section className="w-full h-screen flex justify-center bg-[#CDDBFF] items-center">
             {popUpNotification.status && (
-                <Alert handleBtn={() => setPopUpNotification({...popUpNotification, message:'', status: false})} text={popUpNotification.message} error={true}/>
+                <Alert 
+                    handleBtn={() => setPopUpNotification({ ...popUpNotification, message: '', status: false })} 
+                    text={popUpNotification.message} 
+                    error={true} 
+                />
             )}
-            <div className='bg-white shadow-md border border-white overflow-hidden rounded-3xl h-3/4 w-4/5 max-w-[1000px] flex'>
+            <div className="bg-white shadow-md border border-white overflow-hidden rounded-3xl h-3/4 w-4/5 max-w-[1000px] flex">
                 <form className="px-6 pt-12 flex-1" onSubmit={handleSubmit}>
-                    <div className='pb-2'>
-                        <h1 className='text-6xl font-bold text-blue'>
+                    <div className="pb-2">
+                        <h1 className="text-6xl font-bold text-blue">
                             Bem-vindo
                         </h1>
-                        <p className='text-gray-800 pl-1 text-opacity-80'>
+                        <p className="text-gray-800 pl-1 text-opacity-80">
                             Entre na sua conta para acessar o sistema
                         </p>
                     </div>
-                    <div className='flex flex-col gap-2 w-3/4'>
+                    <div className="flex flex-col gap-2 w-3/4">
                         <InputWithLabel
-                            label={'Email'}
-                            placeholder={'usuario@email.com'}
-                            type='email'
+                            label="Email"
+                            placeholder="usuario@email.com"
+                            type="email"
                             value={user.email}
                             onChange={e => setUser({ ...user, email: e.target.value })}
                         />
                         <InputWithLabel
-                            label={'Senha'}
-                            placeholder={'Digite sua senha'}
-                            type='password'
+                            label="Senha"
+                            placeholder="Digite sua senha"
+                            type="password"
                             value={user.senha}
                             onChange={e => setUser({ ...user, senha: e.target.value })}
                         />
-                        <button className='bg-blue py-1 w-full text-white rounded-xl' type='submit'>
+                        <button className="bg-blue py-1 w-full text-white rounded-xl" type="submit">
                             Entrar
                         </button>
                     </div>
@@ -111,7 +129,7 @@ export default function Page() {
                     <img
                         src="/banner.png"
                         alt="Descrição da imagem"
-                        className='rounded-3xl h-full' 
+                        className="rounded-3xl h-full" 
                     />
                 </figure>
             </div>
