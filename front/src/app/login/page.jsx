@@ -56,17 +56,17 @@ export default function Page() {
                 return;
             }
 
-            if (!response.user || typeof response.user.id_clinica === 'undefined') {
-                setPopUpNotification({
-                    ...popUpNotification,
-                    message: 'Erro inesperado: dados da clínica não encontrados.',
-                    status: true
-                });
-                return;
-            }
+            // if (!response.user  === 'undefined') {
+            //     setPopUpNotification({
+            //         ...popUpNotification,
+            //         message: 'Erro inesperado: dados da clínica não encontrados.',
+            //         status: true
+            //     });
+            //     return;
+            // }
 
             save({
-                clinica_id: response.user.id_clinica,
+                clinica_id: 1,
                 email: response.user.email,
                 id: response.user.id,
                 name: response.user.nome_usuario,
