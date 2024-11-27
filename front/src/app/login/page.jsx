@@ -67,11 +67,11 @@ export default function Page() {
 
             save({
                 clinica_id: 1,
-                email: response.user.email,
-                id: response.user.id,
-                name: response.user.nome_usuario,
-                token: response.token,
-                adm: response.user.adm
+                email: response.user.email | '',
+                id: response.user.id | '',
+                name: response.user.nome_usuario | '',
+                token: response.token | '',
+                adm: response.user.adm | ''
             });
 
             router.push('/dashboard');
